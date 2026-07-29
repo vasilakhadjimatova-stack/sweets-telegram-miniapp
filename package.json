@@ -1,0 +1,15 @@
+{
+  "name": "sweets-telegram-miniapp",
+  "version": "1.0.0",
+  "description": "Telegram Mini App and Bot for a luxury Sweets & Desserts Shop",
+  "main": "bot.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "node bot.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}

@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eksklyuziv Shirinliklar Do'koni</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app" class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header-premium">
+            <div class="header-top-row">
+                <div class="user-profile-premium">
+                    <div class="avatar-premium" id="user-avatar">S</div>
+                    <div class="welcome-text-premium">
+                        <span class="greeting-premium" id="greeting-text">Xush kelibsiz</span>
+                        <h3 class="username-premium" id="user-name">Mehmon</h3>
+                    </div>
+                </div>
+                <div class="header-actions-premium">
+                    <div class="logo-text-premium-topright">
+                        <span class="logo-brand-top">Impulse <span class="logo-brand-accent-top">Sweets</span></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Shopify-style Hero Promo Banner (Only on Shop Tab) -->
+        <div id="promo-hero-card" class="promo-hero-card">
+            <div class="promo-slides-container" id="promo-slides-container">
+                <!-- Slide 1: Vanilla & Golden Custard -->
+                <div class="promo-slide active" style="background: linear-gradient(135deg, #FFFDF0 0%, #FFF2C2 100%);">
+                    <div class="promo-content">
+                        <span class="promo-tag" style="color: #A1720B; font-weight: 700;"><i class="fa-solid fa-star"></i> Kun Taklifi</span>
+                        <h2 class="promo-title" style="color: #3E2723; font-weight: 800;">Haqiqiy shirin <i>baxt</i> lahzalari</h2>
+                        <p class="promo-description" style="color: #5D4037; font-weight: 500;">Har bir bo'lakda nozik va beqiyos ta'm uyg'unligi</p>
+                        <div class="promo-badge-group">
+                            <span class="p-badge" style="background: rgba(161, 114, 11, 0.06); color: #A1720B; border: 1px solid rgba(161, 114, 11, 0.12);"><i class="fa-solid fa-truck"></i> Bepul yetkazish</span>
+                            <span class="p-badge" style="background: rgba(161, 114, 11, 0.06); color: #A1720B; border: 1px solid rgba(161, 114, 11, 0.12);"><i class="fa-solid fa-certificate"></i> 100% Tabiiy</span>
+                        </div>
+                    </div>
+                    <div class="promo-graphics">
+                        <div class="gold-ring ring-1" style="border-color: rgba(161, 114, 11, 0.08);"></div>
+                        <div class="gold-ring ring-2" style="border-color: rgba(161, 114, 11, 0.05);"></div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2: Caramel Honey Cream -->
+                <div class="promo-slide" style="background: linear-gradient(135deg, #FFF8E7 0%, #FFEFC7 100%);">
+                    <div class="promo-content">
+                        <span class="promo-tag" style="color: #A1720B; font-weight: 700;"><i class="fa-solid fa-crown"></i> Shohona San'at</span>
+                        <h2 class="promo-title" style="color: #4E3606; font-weight: 800;">Bayramingiz uchun <i>san'at</i> asari</h2>
+                        <p class="promo-description" style="color: #70531A; font-weight: 500;">Buyurtma asosida tayyorlanadigan eksklyuziv tortlar</p>
+                        <div class="promo-badge-group">
+                            <span class="p-badge" style="background: rgba(161, 114, 11, 0.08); color: #A1720B; border: 1px solid rgba(161, 114, 11, 0.15);"><i class="fa-solid fa-cake-candles"></i> Mualliflik dizayn</span>
+                            <span class="p-badge" style="background: rgba(161, 114, 11, 0.08); color: #A1720B; border: 1px solid rgba(161, 114, 11, 0.15);"><i class="fa-solid fa-gem"></i> Premium sifat</span>
+                        </div>
+                    </div>
+                    <div class="promo-graphics">
+                        <div class="gold-ring ring-1" style="border-color: rgba(161, 114, 11, 0.08);"></div>
+                        <div class="gold-ring ring-2" style="border-color: rgba(161, 114, 11, 0.05);"></div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3: Pistachio & Soft Green -->
+                <div class="promo-slide" style="background: linear-gradient(135deg, #F0F4C3 0%, #E8F5E9 100%);">
+                    <div class="promo-content">
+                        <span class="promo-tag" style="color: #2E7D32; font-weight: 700;"><i class="fa-solid fa-heart"></i> Pechdan yangi</span>
+                        <h2 class="promo-title" style="color: #1B5E20; font-weight: 800;">Issiqgina va <i>yangi</i> pishirilgan</h2>
+                        <p class="promo-description" style="color: #33691E; font-weight: 500;">Fransuzcha an'analar va nozik bodom unidan pishiriqlar</p>
+                        <div class="promo-badge-group">
+                            <span class="p-badge" style="background: rgba(46, 125, 50, 0.08); color: #2E7D32; border: 1px solid rgba(46, 125, 50, 0.15);"><i class="fa-solid fa-cookie"></i> Bodom unidan</span>
+                            <span class="p-badge" style="background: rgba(46, 125, 50, 0.08); color: #2E7D32; border: 1px solid rgba(46, 125, 50, 0.15);"><i class="fa-solid fa-fire-burner"></i> Sehrli retsept</span>
+                        </div>
+                    </div>
+                    <div class="promo-graphics">
+                        <div class="gold-ring ring-1" style="border-color: rgba(46, 125, 50, 0.08);"></div>
+                        <div class="gold-ring ring-2" style="border-color: rgba(46, 125, 50, 0.05);"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide Dots Indicators -->
+            <div class="promo-dots" id="promo-dots">
+                <span class="promo-dot active" data-slide="0"></span>
+                <span class="promo-dot" data-slide="1"></span>
+                <span class="promo-dot" data-slide="2"></span>
+            </div>
+        </div>
+
+        <!-- Search and Filter (Only on Shop Tab) -->
+        <div id="search-filter-section" class="search-filter-section">
+
+
+            <div class="search-bar-premium">
+                <i class="fa-solid fa-magnifying-glass search-icon-premium"></i>
+                <input type="text" id="search-input" placeholder="Shirinliklarni qidirish...">
+                <button id="clear-search" class="clear-search-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="categories-container-premium">
+                <div class="categories-scroll" id="categories-list">
+                    <!-- Dynamically filled by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+            <!-- SHOP TAB -->
+            <section id="shop-tab" class="tab-content active">
+                <!-- 1. Home View (Default: Horizontal Scrollable lists per Category) -->
+                <div id="shop-home-view">
+                    <div id="horizontal-sections-container">
+                        <!-- Dynamically filled by JS -->
+                    </div>
+                </div>
+
+                <!-- 2. Category Detail View (Vertical Grid representation for single category) -->
+                <div id="shop-category-view" style="display: none;">
+                    <div class="category-detail-header">
+                        <button class="back-home-btn" onclick="setCategoryMode('all')">
+                            <i class="fa-solid fa-arrow-left"></i> Bosh sahifaga qaytish
+                        </button>
+                        <h3 class="category-detail-title" id="category-detail-title">Kategoriya</h3>
+                    </div>
+                    <div class="products-grid" id="products-grid">
+                        <!-- Products will be generated dynamically by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATALOG INDEX TAB -->
+            <section id="catalog-tab" class="tab-content">
+                <div class="section-title-wrapper" style="margin-top: 15px;">
+                    <h2 class="section-title">Katalog</h2>
+                    <span class="section-subtitle">Kategoriyalar bo'yicha saralash</span>
+                </div>
+                <div class="catalog-grid" id="catalog-grid">
+                    <div class="catalog-card" onclick="openCatalogCategory('cakes')">
+                        <div class="catalog-card-img-wrapper">
+                            <img src="assets/chocolate_cake.jpg" alt="Tortlar" loading="lazy">
+                        </div>
+                        <span class="catalog-card-title">Tortlar</span>
+                    </div>
+                    <div class="catalog-card" onclick="openCatalogCategory('cupcakes')">
+                        <div class="catalog-card-img-wrapper">
+                            <img src="assets/cupcake.jpg" alt="Kapkeklar" loading="lazy">
+                        </div>
+                        <span class="catalog-card-title">Kapkeklar</span>
+                    </div>
+                    <div class="catalog-card" onclick="openCatalogCategory('donuts')">
+                        <div class="catalog-card-img-wrapper">
+                            <img src="assets/caramel_donut.jpg" alt="Donatlar" loading="lazy">
+                        </div>
+                        <span class="catalog-card-title">Donatlar</span>
+                    </div>
+                    <div class="catalog-card" onclick="openCatalogCategory('macarons')">
+                        <div class="catalog-card-img-wrapper">
+                            <img src="assets/macarons.jpg" alt="Makaronlar" loading="lazy">
+                        </div>
+                        <span class="catalog-card-title">Makaronlar</span>
+                    </div>
+                </div>
+
+                <!-- CATALOG CATEGORY DETAIL VIEW -->
+                <div id="catalog-category-view" style="display: none; margin-top: 15px;">
+                    <div class="catalog-category-header">
+                        <button class="catalog-back-btn" onclick="closeCatalogCategoryView()" title="Ortga qaytish">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <h3 class="catalog-category-title" id="catalog-category-title">Kategoriya</h3>
+                    </div>
+                    <div class="catalog-products-list" id="catalog-products-list">
+                        <!-- Dynamic Large Single Column Cards rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- CART TAB -->
+            <section id="cart-tab" class="tab-content">
+                <div class="cart-header-wrapper">
+                    <button class="back-to-shop-btn" onclick="switchTab('shop')" title="Ortga qaytish">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h3 class="cart-header-title">Savat</h3>
+                    <button class="clear-cart-btn" id="clear-cart-btn" onclick="clearCartConfirm()" title="Savatni tozalash">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
+                
+                <div id="empty-cart" class="empty-state">
+                    <div class="empty-icon-wrapper">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <h3>Savatingiz bo'sh</h3>
+                    <p>Menyudan o'zingizga yoqqan shirinlikni tanlang va savatga qo'shing.</p>
+                    <button class="btn btn-primary" onclick="switchTab('shop')">Do'konni ko'rish</button>
+                </div>
+
+                <div id="cart-content" class="cart-content-wrapper" style="display: none;">
+                    <div class="cart-items-list" id="cart-items-list">
+                        <!-- Dynamic Cart Items styled like Safia -->
+                    </div>
+
+
+                    <!-- Order Summary bar styled like Safia -->
+                    <div class="cart-bottom-bar">
+                        <div class="cart-loyalty-row">
+                            <span class="cart-loyalty-label">Vernem bonusami (Keshbek):</span>
+                            <span class="cart-loyalty-value" id="cart-loyalty-val">+0 ball</span>
+                        </div>
+                        <div class="cart-total-row">
+                            <span class="cart-total-label">Yakuniy narx:</span>
+                            <span class="cart-total-value" id="summary-total">0 UZS</span>
+                        </div>
+                        <button class="checkout-trigger-btn" onclick="openCheckoutSheet()">
+                            Buyurtmani rasmiylashtirish
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ORDERS TAB -->
+            <section id="orders-tab" class="tab-content">
+                <div class="section-title-wrapper">
+                    <h2 class="section-title">Buyurtma Holati</h2>
+                </div>
+
+                <div id="no-active-order" class="empty-state">
+                    <div class="empty-icon-wrapper">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <h3>Faol buyurtma yo'q</h3>
+                    <p>Hozirda hech qanday faol buyurtmangiz mavjud emas.</p>
+                    <button class="btn btn-primary" onclick="switchTab('shop')">Buyurtma berish</button>
+                </div>
+
+                <div id="active-order-tracking" class="tracking-container" style="display: none;">
+                    <div class="tracking-card card">
+                        <div class="order-id-header">
+                            <span>Buyurtma ID: <strong id="tracking-order-id">#1024</strong></span>
+                            <span class="order-date" id="tracking-order-date">Bugun</span>
+                        </div>
+
+                        <!-- Progress Bar / Tracker -->
+                        <div class="order-progress">
+                            <div class="progress-step active" id="step-received">
+                                <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                                <span>Qabul qilindi</span>
+                            </div>
+                            <div class="progress-step" id="step-preparing">
+                                <div class="step-icon"><i class="fa-solid fa-cookie-bite"></i></div>
+                                <span>Tayyorlanmoqda</span>
+                            </div>
+                            <div class="progress-step" id="step-delivering">
+                                <div class="step-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                                <span>Yo'lda</span>
+                            </div>
+                            <div class="progress-step" id="step-completed">
+                                <div class="step-icon"><i class="fa-solid fa-house-chimney-user"></i></div>
+                                <span>Yetkazildi</span>
+                            </div>
+                        </div>
+
+                        <div class="tracking-details">
+                            <h4>Buyurtma tarkibi:</h4>
+                            <div id="tracking-items" class="tracking-items-list">
+                                <!-- Dynamic tracking items list -->
+                            </div>
+                            <hr class="summary-divider">
+                            <div class="tracking-summary-row">
+                                <span>Jami summa:</span>
+                                <strong id="tracking-total-price">0 UZS</strong>
+                            </div>
+                            <div class="tracking-summary-row">
+                                <span>To'lov turi:</span>
+                                <span id="tracking-payment-type">-</span>
+                            </div>
+                            <div class="tracking-summary-row">
+                                <span>Manzil:</span>
+                                <span id="tracking-address">-</span>
+                            </div>
+                        </div>
+
+                        <div class="tracking-footer">
+                            <p class="status-tip"><i class="fa-solid fa-circle-info"></i> Buyurtmangiz holati haqida bot orqali ham xabar olib turasiz.</p>
+                            <button class="btn btn-secondary btn-block" id="cancel-order-btn">Buyurtmani bekor qilish</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ADMIN TAB -->
+            <section id="admin-tab" class="tab-content">
+                <div class="section-title-wrapper admin-header-wrapper">
+                    <div>
+                        <h2 class="section-title">Boshqaruv Markazi</h2>
+                        <span class="section-subtitle">Tizim boshqaruvi va do'kon monitoringi</span>
+                    </div>
+                    <span class="admin-badge-role"><i class="fa-solid fa-shield-halved"></i> Superadmin</span>
+                </div>
+                
+                <!-- Admin Sub-Navigation Tabs -->
+                <div class="admin-sub-tabs">
+                    <button class="admin-sub-tab-btn active" data-subtab="dash">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="admin-sub-tab-btn" data-subtab="orders">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Buyurtmalar</span>
+                    </button>
+                    <button class="admin-sub-tab-btn" data-subtab="products">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>Katalog</span>
+                    </button>
+                </div>
+
+                <!-- SUBTAB 1: DASHBOARD -->
+                <div id="admin-subtab-dash" class="admin-subtab-content active">
+                    <!-- KPI Stats Grid -->
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card card grad-gold">
+                            <div class="stat-header">
+                                <span class="stat-label">Jami Savdo</span>
+                                <i class="fa-solid fa-wallet stat-icon"></i>
+                            </div>
+                            <h3 id="admin-stat-revenue" class="stat-value">0 UZS</h3>
+                            <span class="stat-compare" id="admin-stat-revenue-compare"><i class="fa-solid fa-arrow-trend-up"></i> Simulyatsiya faol</span>
+                        </div>
+                        <div class="admin-stat-card card grad-crimson">
+                            <div class="stat-header">
+                                <span class="stat-label">Buyurtmalar</span>
+                                <i class="fa-solid fa-receipt stat-icon"></i>
+                            </div>
+                            <h3 id="admin-stat-orders" class="stat-value">0 ta</h3>
+                            <span class="stat-compare" id="admin-stat-orders-pending"><i class="fa-solid fa-clock"></i> 0 ta kutilmoqda</span>
+                        </div>
+                        <div class="admin-stat-card card grad-blue">
+                            <div class="stat-header">
+                                <span class="stat-label">O'rtacha Chek</span>
+                                <i class="fa-solid fa-calculator stat-icon"></i>
+                            </div>
+                            <h3 id="admin-stat-avg" class="stat-value">0 UZS</h3>
+                            <span class="stat-compare"><i class="fa-solid fa-cart-shopping"></i> Savatcha hajmi</span>
+                        </div>
+                        <div class="admin-stat-card card grad-green">
+                            <div class="stat-header">
+                                <span class="stat-label">Konversiya</span>
+                                <i class="fa-solid fa-chart-line stat-icon"></i>
+                            </div>
+                            <h3 id="admin-stat-conversion" class="stat-value">94.8%</h3>
+                            <span class="stat-compare"><i class="fa-solid fa-thumbs-up"></i> Premium faollik</span>
+                        </div>
+                    </div>
+
+                    <!-- Custom CSS Chart: Sales Trend (Dynamic) -->
+                    <div class="admin-section card">
+                        <h3>📈 Savdo Trendi (Haftalik)</h3>
+                        <div class="sales-chart-wrapper">
+                            <div class="sales-chart" id="admin-sales-chart">
+                                <!-- Generated Dynamically by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Selling Products Breakdown (Dynamic) -->
+                    <div class="admin-section card">
+                        <h3>🏆 Top shirinliklar ulushi</h3>
+                        <div class="top-products-progress" id="admin-top-products-list">
+                            <!-- Generated Dynamically by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 2: ORDERS MANAGEMENT -->
+                <div id="admin-subtab-orders" class="admin-subtab-content">
+                    <div class="orders-filter-container">
+                        <div class="orders-search-bar">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="admin-orders-search" placeholder="ID yoki mijoz ismini qidirish...">
+                        </div>
+                        <div class="orders-status-filters" id="admin-orders-status-filters">
+                            <button class="status-filter-btn active" data-filter="all">Barchasi</button>
+                            <button class="status-filter-btn" data-filter="received">Yangi</button>
+                            <button class="status-filter-btn" data-filter="preparing">Tayyorlovda</button>
+                            <button class="status-filter-btn" data-filter="delivering">Yo'lda</button>
+                            <button class="status-filter-btn" data-filter="completed">Yakunlangan</button>
+                        </div>
+                    </div>
+                    
+                    <div id="admin-orders-list" class="admin-orders-list">
+                        <p class="admin-empty-text">Hozircha buyurtmalar mavjud emas.</p>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 3: CATALOG MANAGEMENT -->
+                <div id="admin-subtab-products" class="admin-subtab-content">
+                    <div class="catalog-header-bar">
+                        <div class="orders-search-bar">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="admin-catalog-search" placeholder="Shirinlik nomini qidirish...">
+                        </div>
+                        <div class="catalog-action-buttons" style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary" id="admin-manage-categories-btn" style="padding: 10px 14px; font-size: 0.8rem;">
+                                <i class="fa-solid fa-folder-open"></i> Kategoriyalar
+                            </button>
+                            <button class="btn btn-primary add-product-trigger-btn" id="admin-add-product-btn" style="padding: 10px 14px; font-size: 0.8rem;">
+                                <i class="fa-solid fa-plus"></i> Yangi shirinlik
+                            </button>
+                        </div>
+                    </div>
+                    <div id="admin-products-list" class="admin-products-list">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Product Form Modal (Admin Only) -->
+            <div id="admin-product-modal" class="modal-overlay">
+                <div class="modal-content admin-form-modal">
+                    <button class="close-modal-btn" id="close-admin-modal"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="modal-body" style="padding: 20px 20px 10px 20px;">
+                        <h2 id="admin-modal-title" class="product-title-detail" style="font-size: 1.3rem; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Yangi shirinlik qo'shish</h2>
+                        <form id="admin-product-form" style="display: flex; flex-direction: column; gap: 12px;">
+                            <input type="hidden" id="admin-form-product-id">
+                            
+                            <div class="form-group">
+                                <label for="admin-form-title">Nomi <span class="required">*</span></label>
+                                <input type="text" id="admin-form-title" placeholder="Shirinlik nomi" required>
+                            </div>
+                            
+                            <div class="form-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div class="form-group">
+                                    <label for="admin-form-category">Kategoriya <span class="required">*</span></label>
+                                    <select id="admin-form-category" class="form-select" required style="border: 1px solid var(--border-color); background-color: var(--bg-color); padding: 12px 14px; border-radius: var(--radius-md); color: var(--text-color); font-family: var(--font-body); font-size: 0.95rem;">
+                                        <option value="cakes">Tortlar</option>
+                                        <option value="cupcakes">Kapkeklar</option>
+                                        <option value="donuts">Donatlar</option>
+                                        <option value="macarons">Makaronlar</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="admin-form-price">Narxi (UZS) <span class="required">*</span></label>
+                                    <input type="number" id="admin-form-price" placeholder="Narxi" required min="0">
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div class="form-group">
+                                    <label for="admin-form-weight">Og'irligi / Soni <span class="required">*</span></label>
+                                    <input type="text" id="admin-form-weight" placeholder="Masalan: 950 g, 6 dona" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="admin-form-time">Vaqti <span class="required">*</span></label>
+                                    <input type="text" id="admin-form-time" placeholder="Masalan: Tezda, 1 kun" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="admin-form-description">Tavsif (Description) <span class="required">*</span></label>
+                                <textarea id="admin-form-description" placeholder="Mijozga shirinlik haqida batafsil ma'lumot..." required rows="2" style="border: 1px solid var(--border-color); background-color: var(--bg-color); padding: 10px 12px; border-radius: var(--radius-md); color: var(--text-color); font-family: var(--font-body); font-size: 0.95rem; resize: none;"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="admin-form-ingredients">Asosiy tarkibi <span class="required">*</span></label>
+                                <input type="text" id="admin-form-ingredients" placeholder="Masalan: Belgiya shokoladi, tuxum, sariyog'..." required>
+                            </div>
+
+                            <!-- Image Selector & Upload -->
+                            <div class="form-group">
+                                <label>Rasm Tanlash / Yuklash <span class="required">*</span></label>
+                                
+                                <!-- Presets list -->
+                                <div class="image-preset-selector" style="display: flex; gap: 8px; margin-bottom: 8px; overflow-x: auto; padding-bottom: 2px;">
+                                    <label class="preset-option">
+                                        <input type="radio" name="admin_image_option" value="assets/chocolate_cake.jpg" checked>
+                                        <img src="assets/chocolate_cake.jpg" alt="Cake">
+                                    </label>
+                                    <label class="preset-option">
+                                        <input type="radio" name="admin_image_option" value="assets/macarons.jpg">
+                                        <img src="assets/macarons.jpg" alt="Macarons">
+                                    </label>
+                                    <label class="preset-option">
+                                        <input type="radio" name="admin_image_option" value="assets/caramel_donut.jpg">
+                                        <img src="assets/caramel_donut.jpg" alt="Donut">
+                                    </label>
+                                    <label class="preset-option">
+                                        <input type="radio" name="admin_image_option" value="assets/cupcake.jpg">
+                                        <img src="assets/cupcake.jpg" alt="Cupcake">
+                                    </label>
+                                    <label class="preset-option custom-upload-option">
+                                        <input type="radio" name="admin_image_option" value="custom" id="radio-custom-upload">
+                                        <div class="custom-upload-placeholder">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                                            <span>Komp</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <!-- File Upload (device) -->
+                                <div class="custom-file-upload-wrapper" id="custom-file-upload-wrapper" style="display: none;">
+                                    <label for="admin-form-file" class="file-upload-label" style="display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px dashed var(--primary-color); padding: 12px; border-radius: var(--radius-md); cursor: pointer; color: var(--primary-color); font-size: 0.85rem; font-weight: 600;">
+                                        <i class="fa-solid fa-image"></i>
+                                        <span>Rasm faylini tanlash</span>
+                                    </label>
+                                    <input type="file" id="admin-form-file" accept="image/*" class="file-input-hidden" style="display: none;">
+                                    <div class="uploaded-preview-wrapper" id="uploaded-preview-wrapper" style="display: none; align-items: center; justify-content: space-between; margin-top: 8px; background-color: var(--bg-color); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                                        <img id="uploaded-image-preview" src="" alt="Preview" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm);">
+                                        <button type="button" class="btn-remove-uploaded" id="btn-remove-uploaded" style="border: none; background: transparent; color: var(--accent-color); font-size: 1.1rem; cursor: pointer;"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="admin-form-submit-btn" style="margin-top: 5px;">
+                                <i class="fa-solid fa-floppy-disk"></i> Mahsulotni saqlash
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Manager Modal (Admin Only) -->
+            <div id="admin-category-modal" class="modal-overlay">
+                <div class="modal-content admin-category-modal-content" style="max-height: 80vh; overflow-y: auto;">
+                    <button class="close-modal-btn" id="close-category-modal"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="modal-body" style="padding: 20px;">
+                        <h2 style="font-size: 1.3rem; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Kategoriyalarni Boshqarish</h2>
+                        
+                        <!-- Add Category Form -->
+                        <div class="add-category-inline-form" style="display: flex; gap: 8px; margin-bottom: 15px;">
+                            <input type="text" id="new-category-name-input" placeholder="Yangi kategoriya nomi (masalan: Ichimliklar)" style="flex: 1; border: 1px solid var(--border-color); background-color: var(--bg-color); padding: 10px 12px; border-radius: var(--radius-md); color: var(--text-color); font-size: 0.9rem;">
+                            <button class="btn btn-primary" id="btn-add-category-action" style="padding: 10px 14px;"><i class="fa-solid fa-plus"></i> Qo'shish</button>
+                        </div>
+
+                        <!-- Categories List Table -->
+                        <div class="admin-category-list-wrapper">
+                            <div id="admin-categories-table-list" style="display: flex; flex-direction: column; gap: 8px;">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Floating Cart Button (visible only when items are in cart and not on cart tab) -->
+        <button id="floating-cart" class="floating-cart-btn pulse-animation">
+            <span class="cart-badge" id="floating-cart-count">0</span>
+            <i class="fa-solid fa-basket-shopping"></i>
+        </button>
+
+        <!-- Product Details Modal -->
+        <div id="product-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="close-modal-btn" id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-image-wrapper">
+                    <img id="modal-product-image" src="" alt="Product Image">
+                </div>
+                <div class="modal-body">
+                    <div class="modal-header-info">
+                        <h2 id="modal-product-title" class="product-title-detail">Product Title</h2>
+                        <span id="modal-product-price" class="product-price-detail">0 UZS</span>
+                    </div>
+                    
+                    <div class="modal-specs">
+                        <div class="spec-item">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <span id="modal-product-weight">0 g</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fa-solid fa-star text-gold"></i>
+                            <span id="modal-product-rating">4.8</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fa-solid fa-clock"></i>
+                            <span id="modal-product-time">Tezda</span>
+                        </div>
+                    </div>
+
+                    <p id="modal-product-description" class="product-description-detail">Product description text...</p>
+                    
+                    <div class="modal-ingredients-section">
+                        <h4>Asosiy tarkibi:</h4>
+                        <p id="modal-product-ingredients" class="product-ingredients-text">Sut, tuxum, shakar, tabiiy mevalar...</p>
+                    </div>
+
+                    <!-- Quantity Control and Add Button -->
+                    <div class="modal-footer-controls">
+                        <div class="quantity-selector">
+                            <button id="modal-qty-minus" class="qty-btn"><i class="fa-solid fa-minus"></i></button>
+                            <span id="modal-qty-val" class="qty-val">1</span>
+                            <button id="modal-qty-plus" class="qty-btn"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <button id="modal-add-to-cart-btn" class="btn btn-primary add-to-cart-action">
+                            Savatga qo'shish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide-up Checkout Bottom Sheet Overlay (Safia Style) -->
+        <div id="checkout-overlay" class="checkout-overlay" onclick="closeCheckoutSheetOnOuterClick(event)">
+            <div class="checkout-sheet">
+                <div class="checkout-sheet-header">
+                    <h3 class="checkout-sheet-title">Buyurtmani rasmiylashtirish</h3>
+                    <button class="close-sheet-btn" onclick="closeCheckoutSheet()">✕</button>
+                </div>
+                <div class="checkout-sheet-body">
+                    <div class="checkout-form-section">
+                        <form id="checkout-form">
+                            <div class="form-group">
+                                <label for="form-name">Ismingiz <span class="required">*</span></label>
+                                <input type="text" id="form-name" placeholder="Ismingizni kiriting" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-phone">Telefon raqam <span class="required">*</span></label>
+                                <div class="phone-input-wrapper">
+                                    <span class="phone-prefix">+998</span>
+                                    <input type="tel" id="form-phone" placeholder="90 123 45 67" required pattern="[0-9\s-]{9,12}">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Yetkazib berish turi <span class="required">*</span></label>
+                                <div class="delivery-options">
+                                    <label class="delivery-option active">
+                                        <input type="radio" name="delivery_type" value="delivery" checked>
+                                        <i class="fa-solid fa-motorcycle"></i>
+                                        <span>Yetkazib berish</span>
+                                    </label>
+                                    <label class="delivery-option">
+                                        <input type="radio" name="delivery_type" value="pickup">
+                                        <i class="fa-solid fa-store"></i>
+                                        <span>Olib ketish</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="address-group">
+                                <label for="form-address">Yetkazib berish manzili <span class="required">*</span></label>
+                                <textarea id="form-address" placeholder="Shahar, ko'cha, uy, xonadon raqamini kiriting" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>To'lov turi <span class="required">*</span></label>
+                                <div class="payment-options">
+                                    <label class="payment-option active">
+                                        <input type="radio" name="payment_method" value="cash" checked>
+                                        <i class="fa-solid fa-money-bill-wave"></i>
+                                        <span>Naqd pul</span>
+                                    </label>
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment_method" value="card">
+                                        <i class="fa-solid fa-credit-card"></i>
+                                        <span>Karta orqali</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="form-comment">Izoh (ixtiyoriy)</label>
+                                <textarea id="form-comment" placeholder="Tabrik so'zlari yoki qo'shimcha istaklar..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block checkout-submit-btn" id="submit-order-btn">
+                                <i class="fa-solid fa-circle-check"></i> Buyurtma berish (<span class="btn-total-sum" id="btn-total-sum-val">0</span> UZS)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Checkout Overlay Animation -->
+        <div id="success-overlay" class="success-overlay">
+            <div class="success-content">
+                <div class="success-checkmark">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+                <h2>Rahmat! Buyurtmangiz qabul qilindi</h2>
+                <p>Operatorlarimiz tez orada siz bilan bog'lanishadi.</p>
+                <div class="success-actions">
+                    <button class="btn btn-primary" id="success-done-btn">Loyiha sahifasiga qaytish</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Navigation Bar -->
+        <nav class="app-nav">
+            <button class="nav-item active" data-tab="shop" id="nav-shop">
+                <i class="fa-solid fa-store"></i>
+                <span>Do'kon</span>
+            </button>
+            <button class="nav-item" data-tab="catalog" id="nav-catalog">
+                <i class="fa-solid fa-book-open"></i>
+                <span>Katalog</span>
+            </button>
+            <button class="nav-item" data-tab="cart" id="nav-cart">
+                <div class="nav-icon-badge-wrapper">
+                    <span class="nav-badge" id="nav-cart-badge" style="display: none;">0</span>
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+                <span>Savat</span>
+            </button>
+            <button class="nav-item" data-tab="orders" id="nav-orders">
+                <div class="nav-icon-badge-wrapper">
+                    <span class="nav-pulse-dot" id="nav-orders-dot" style="display: none;"></span>
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <span>Buyurtmalar</span>
+            </button>
+            <button class="nav-item" data-tab="admin" id="nav-admin">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>Boshqaruv</span>
+            </button>
+        </nav>
+    </div>
+    <script src="app.js"></script>
+
+    <!-- CHECKOUT MODAL SHEET (Safia Style Drawer) -->
+    <div id="checkout-modal-sheet" class="modal-backdrop" style="display: none;">
+        <div class="checkout-sheet-container">
+            <div class="checkout-sheet-header">
+                <h3>Buyurtmani rasmiylashtirish</h3>
+                <button class="close-sheet-btn" onclick="closeCheckoutSheet()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="checkout-sheet-body">
+                <form id="checkout-sheet-form">
+                    <div class="form-group">
+                        <label for="form-name">Ismingiz <span class="required">*</span></label>
+                        <input type="text" id="form-name" placeholder="Ismingizni kiriting" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="form-phone">Telefon raqamingiz <span class="required">*</span></label>
+                        <div class="phone-input-wrapper">
+                            <span class="phone-prefix">+998</span>
+                            <input type="tel" id="form-phone" placeholder="90 123 45 67" required pattern="[0-9\s-]{9,12}">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Yetkazib berish turi</label>
+                        <div class="delivery-options">
+                            <label class="delivery-option active">
+                                <input type="radio" name="delivery_type" value="delivery" checked onchange="toggleSheetDeliveryType('delivery')">
+                                <i class="fa-solid fa-truck-fast"></i>
+                                <span>Yetkazib berish</span>
+                            </label>
+                            <label class="delivery-option">
+                                <input type="radio" name="delivery_type" value="pickup" onchange="toggleSheetDeliveryType('pickup')">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                                <span>Olib ketish (Bepul)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="sheet-address-group">
+                        <label for="form-address">Yetkazib berish manzili <span class="required">*</span></label>
+                        <textarea id="form-address" placeholder="Toshkent sh., Yunusobod 4-daha, 12-uy" rows="2" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>To'lov turi</label>
+                        <div class="payment-options">
+                            <label class="payment-option active">
+                                <input type="radio" name="payment_method" value="card" checked>
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>Karta orqali</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="cash">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                                <span>Naqd pul</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-comment">Izoh (ixtiyoriy)</label>
+                        <input type="text" id="form-comment" placeholder="Masalan: Eshik qo'ng'irog'ini chalmang">
+                    </div>
+
+                    <div class="sheet-summary-box">
+                        <div class="sheet-summary-row">
+                            <span>Mahsulotlar:</span>
+                            <span id="sheet-subtotal-val">0 UZS</span>
+                        </div>
+                        <div class="sheet-summary-row" id="sheet-delivery-row">
+                            <span>Yetkazib berish:</span>
+                            <span id="sheet-delivery-val">20,000 UZS</span>
+                        </div>
+                        <div class="sheet-summary-row sheet-total-row">
+                            <span>Jami to'lov:</span>
+                            <span id="sheet-total-val">0 UZS</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block checkout-submit-btn">
+                        Buyurtmani tasdiqlash
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
