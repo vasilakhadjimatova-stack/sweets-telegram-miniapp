@@ -3,7 +3,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 // Retrieve environment variables
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const webAppUrl = process.env.WEB_APP_URL || 'https://your-github-pages-or-hosting.com';
+const webAppUrl = process.env.WEB_APP_URL || 'https://vasilakhadjimatova-stack.github.io/sweets-telegram-miniapp/';
 const adminGroupId = process.env.ADMIN_GROUP_ID;
 
 if (!token) {
@@ -26,8 +26,11 @@ bot.onText(/\/start/, (msg) => {
     `Bizda eng shirin va sifatli tortlar, fransuzcha makaronlar, donatlar hamda kapkeklarni buyurtma qilishingiz mumkin.\n\n` +
     `Pastdagi *🛍 Do'konni ochish* tugmasini bosing va shirinliklar dunyosiga sayohat qiling!`;
 
-  const inlineKeyboard = {
-    inline_keyboard: [
+  // Reply keyboard button that opens the Web App.
+  // IMPORTANT: tg.sendData() (used by the Mini App to submit orders) ONLY works
+  // when the Web App is opened from a reply-keyboard button, NOT an inline button.
+  const replyKeyboard = {
+    keyboard: [
       [
         {
           text: "🛍 Do'konni ochish",
@@ -35,22 +38,29 @@ bot.onText(/\/start/, (msg) => {
         }
       ],
       [
-        {
-          text: "💬 Guruhimizga qo'shilish",
-          url: 'https://t.me/your_sweets_group' // Replace with user's actual group link
-        },
-        {
-          text: '📞 Aloqa / Yordam',
-          callback_data: 'support_info'
-        }
+        { text: '📞 Aloqa / Yordam' }
       ]
-    ]
+    ],
+    resize_keyboard: true,
+    is_persistent: true
   };
 
   bot.sendMessage(chatId, welcomeMessage, {
     parse_mode: 'Markdown',
-    reply_markup: inlineKeyboard
+    reply_markup: replyKeyboard
   });
+});
+
+// Handle the "Aloqa / Yordam" reply-keyboard button (plain text message)
+bot.onText(/📞 Aloqa \/ Yordam/, (msg) => {
+  const chatId = msg.chat.id;
+  const supportMessage = `*📞 Biz bilan bog'lanish:*\n\n` +
+    `Telegram: @impulse_sweets_admin\n` +
+    `Telefon: +998 90 123 45 67\n` +
+    `Ish vaqti: Har kuni, 09:00 dan 22:00 gacha\n\n` +
+    `Agar sizda maxsus buyurtmalar yoki savollar bo'lsa, bemalol murojaat qiling.`;
+
+  bot.sendMessage(chatId, supportMessage, { parse_mode: 'Markdown' });
 });
 
 // Handle Callback Queries (Support info & Admin button presses)

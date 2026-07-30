@@ -1067,14 +1067,14 @@ function switchTab(tabId) {
 function syncTelegramMainButton() {
     if (!tg) return;
 
+    // MainButton is shown ONLY on the cart tab (checkout). On all other tabs
+    // it stays hidden — the in-app bottom nav & floating basket already cover navigation.
     if (currentTab === "cart" && cart.length > 0) {
         tg.MainButton.text = `BUYURTMA BERISH (${formatUZS(calculateTotal())})`;
-        tg.MainButton.show();
+        // Prevent stacking duplicate click handlers on repeated syncs
+        tg.MainButton.offClick(triggerCheckoutFormSubmit);
         tg.MainButton.onClick(triggerCheckoutFormSubmit);
-    } else if (currentTab === "shop" && cart.length > 0) {
-        tg.MainButton.text = "SAVATGA O'TISH";
         tg.MainButton.show();
-        tg.MainButton.onClick(() => switchTab("cart"));
     } else {
         tg.MainButton.hide();
     }
