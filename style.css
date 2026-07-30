@@ -86,12 +86,19 @@
     outline: none;
 }
 
+html {
+    /* Block rubber-band overscroll that triggers Telegram's swipe-to-close
+       gesture on older clients (backup for tg.disableVerticalSwipes) */
+    overscroll-behavior: none;
+}
+
 body {
     font-family: var(--font-body);
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.5;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
     user-select: none;
     -webkit-user-select: none;
 }
