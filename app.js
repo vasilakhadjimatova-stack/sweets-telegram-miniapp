@@ -1,5 +1,5 @@
-// Initialize Telegram WebApp SDK
-const tg = window.Telegram.WebApp;
+// Initialize Telegram WebApp SDK (guarded: SDK script may fail to load outside Telegram)
+const tg = window.Telegram ? window.Telegram.WebApp : null;
 
 // Tell Telegram that the Web App is ready and expand it
 if (tg) {
@@ -272,6 +272,11 @@ let discountPercent = 0;
 let ordersList = [];
 let adminSubtab = "dash";
 let clientDeliveryType = "delivery";
+let modalQty = 1; // Product modal quantity (reset each time the modal opens)
+
+// Telegram user IDs allowed to see the "Boshqaruv" (admin) tab.
+// Empty list = tab stays visible to everyone (fill with real IDs to lock it down).
+const ADMIN_TG_IDS = [];
 
 let categories = [
     { id: "cakes", name: "Tortlar" },
@@ -329,9 +334,7 @@ const summaryDiscountRow = document.getElementById("summary-discount-row");
 const summaryDiscount = document.getElementById("summary-discount");
 const summaryDiscountPercent = document.getElementById("discount-percent");
 const summaryTotal = document.getElementById("summary-total");
-const checkoutForm = document.getElementById("checkout-form");
-const checkoutSubmitBtn = document.getElementById("submit-order-btn");
-const btnTotalSumLabel = document.querySelector(".btn-total-sum");
+// Checkout form lives in #checkout-modal-sheet (queried lazily — it sits after the script tag)
 
 // Tracking Elements
 const noActiveOrderView = document.getElementById("no-active-order");
@@ -371,6 +374,15 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Start automated promo banner carousel slider
     startPromoSlider();
+
+    // Hide the admin tab from non-admin users (active only once ADMIN_TG_IDS is filled)
+    if (ADMIN_TG_IDS.length > 0) {
+        const uid = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : null;
+        if (!ADMIN_TG_IDS.includes(uid)) {
+            const adminNav = document.getElementById("nav-admin");
+            if (adminNav) adminNav.style.display = "none";
+        }
+    }
 });
 
 // Setup Telegram User Profile
@@ -382,10 +394,12 @@ function setupTelegramUser() {
         
         // Avatar circle text
         const initials = (user.first_name ? user.first_name[0] : "") + (user.last_name ? user.last_name[0] : "");
-        document.getElementById("user-avatar").textContent = initials.toUpperCase() || user.username ? user.username.substring(0,2).toUpperCase() : "M";
-        
-        // Autofill form name
-        document.getElementById("form-name").value = name || "";
+        document.getElementById("user-avatar").textContent =
+            initials.toUpperCase() || (user.username ? user.username.substring(0, 2).toUpperCase() : "M");
+
+        // Autofill form name (checkout sheet field)
+        const formNameInput = document.getElementById("form-name");
+        if (formNameInput) formNameInput.value = name || "";
     } else {
         console.log("Running outside Telegram. Dev mode fallback enabled.");
     }
@@ -529,23 +543,21 @@ function renderProducts() {
                 const cartItem = cart.find(item => item.product.id === p.id);
                 const qty = cartItem ? cartItem.quantity : 0;
                 
+                // Use the same visible "bar" control markup as the home view
+                // (.product-footer is hidden globally by the newer CSS design)
                 let actionControl = "";
                 if (qty > 0) {
                     actionControl = `
-                        <div class="product-qty-selector">
-                            <button class="qty-sel-btn minus" data-id="${p.id}">
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <span class="qty-sel-val">${qty}</span>
-                            <button class="qty-sel-btn plus" data-id="${p.id}">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
+                        <div class="product-qty-selector-bar">
+                            <button class="qty-bar-btn minus" data-id="${p.id}">−</button>
+                            <span class="qty-bar-val">${qty}</span>
+                            <button class="qty-bar-btn plus" data-id="${p.id}">+</button>
                         </div>
                     `;
                 } else {
                     actionControl = `
-                        <button class="add-to-cart-btn" data-id="${p.id}">
-                            <i class="fa-solid fa-plus"></i>
+                        <button class="add-to-cart-bar-btn" data-id="${p.id}">
+                            <i class="fa-solid fa-basket-shopping"></i>
                         </button>
                     `;
                 }
@@ -557,8 +569,8 @@ function renderProducts() {
                     </div>
                     <div class="card-info">
                         <h4 class="product-title">${p.title}</h4>
-                        <div class="product-footer">
-                            <span class="product-price">${formatUZS(p.price)}</span>
+                        <span class="product-price">${formatUZS(p.price)}</span>
+                        <div class="product-action-row">
                             ${actionControl}
                         </div>
                     </div>
@@ -572,8 +584,11 @@ function renderProducts() {
 
     // Dynamic Binding with 100% Reliability for mobile and webviews
     
+    // Bindings are scoped to #shop-tab so hidden catalog-view buttons (bound
+    // separately in renderCatalogCategoryProducts) never get duplicate listeners.
+
     // 1. Rebind standard add to cart button click
-    const addBtns = document.querySelectorAll(".add-to-cart-bar-btn");
+    const addBtns = document.querySelectorAll("#shop-tab .add-to-cart-bar-btn");
     addBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation(); // Stop opening details modal
@@ -584,7 +599,7 @@ function renderProducts() {
     });
 
     // 2. Rebind quantity minus buttons click
-    const minusBtns = document.querySelectorAll(".qty-bar-btn.minus");
+    const minusBtns = document.querySelectorAll("#shop-tab .qty-bar-btn.minus");
     minusBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation(); // Stop opening details modal
@@ -594,7 +609,7 @@ function renderProducts() {
     });
 
     // 3. Rebind quantity plus buttons click
-    const plusBtns = document.querySelectorAll(".qty-bar-btn.plus");
+    const plusBtns = document.querySelectorAll("#shop-tab .qty-bar-btn.plus");
     plusBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation(); // Stop opening details modal
@@ -604,7 +619,7 @@ function renderProducts() {
     });
 
     // 4. Stop propagation on quantity selector background click
-    const qtySelectors = document.querySelectorAll(".product-qty-selector-bar");
+    const qtySelectors = document.querySelectorAll("#shop-tab .product-qty-selector-bar");
     qtySelectors.forEach(sel => {
         sel.addEventListener("click", (e) => {
             e.stopPropagation(); // Stop modal when clicking background of the pill
@@ -637,6 +652,105 @@ window.setCategoryMode = function(catId) {
 };
 function formatUZS(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS";
+}
+
+// ==========================================
+// CATALOG TAB — CATEGORY DETAIL VIEW
+// ==========================================
+window.openCatalogCategory = function(catId) {
+    currentCatalogCatId = catId;
+    const grid = document.getElementById("catalog-grid");
+    const view = document.getElementById("catalog-category-view");
+    const titleEl = document.getElementById("catalog-category-title");
+    const cat = categories.find(c => c.id === catId);
+
+    if (titleEl) titleEl.textContent = cat ? cat.name : "Kategoriya";
+    if (grid) grid.style.display = "none";
+    if (view) view.style.display = "block";
+
+    renderCatalogCategoryProducts(catId);
+    window.scrollTo(0, 0);
+    triggerHapticFeedback("light");
+};
+
+window.closeCatalogCategoryView = function() {
+    currentCatalogCatId = null;
+    const grid = document.getElementById("catalog-grid");
+    const view = document.getElementById("catalog-category-view");
+    if (view) view.style.display = "none";
+    if (grid) grid.style.display = "";
+    triggerHapticFeedback("light");
+};
+
+function renderCatalogCategoryProducts(catId) {
+    const list = document.getElementById("catalog-products-list");
+    if (!list) return;
+
+    const filtered = products.filter(p => p.category === catId);
+    list.innerHTML = "";
+
+    if (filtered.length === 0) {
+        list.innerHTML = `<p class="empty-state-text" style="text-align:center; padding: 30px 10px;">Bu kategoriyada hozircha mahsulot yo'q.</p>`;
+        return;
+    }
+
+    filtered.forEach(p => {
+        const cartItem = cart.find(item => item.product.id === p.id);
+        const qty = cartItem ? cartItem.quantity : 0;
+
+        // Same visible "bar" control markup as the shop views
+        const actionControl = qty > 0
+            ? `<div class="product-qty-selector-bar">
+                   <button class="qty-bar-btn minus" data-id="${p.id}">−</button>
+                   <span class="qty-bar-val">${qty}</span>
+                   <button class="qty-bar-btn plus" data-id="${p.id}">+</button>
+               </div>`
+            : `<button class="add-to-cart-bar-btn" data-id="${p.id}"><i class="fa-solid fa-basket-shopping"></i></button>`;
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.setAttribute("data-id", p.id);
+        card.innerHTML = `
+            <div class="card-image-wrapper">
+                <img src="${p.image}" alt="${p.title}" loading="lazy">
+                <span class="card-badge"><i class="fa-solid fa-star text-gold"></i> ${p.rating}</span>
+            </div>
+            <div class="card-info">
+                <h4 class="product-title">${p.title}</h4>
+                <span class="product-price">${formatUZS(p.price)}</span>
+                <div class="product-action-row">
+                    ${actionControl}
+                </div>
+            </div>
+        `;
+        card.addEventListener("click", () => openProductModal(p));
+        list.appendChild(card);
+    });
+
+    // Bind cart controls within this freshly rendered list only
+    // (renderProducts scopes its bindings to #shop-tab, so no duplicates)
+    list.querySelectorAll(".add-to-cart-bar-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            addToCart(btn.getAttribute("data-id"), 1);
+            triggerHapticFeedback("medium");
+        });
+    });
+    list.querySelectorAll(".qty-bar-btn.minus").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            changeCartQty(btn.getAttribute("data-id"), -1);
+        });
+    });
+    list.querySelectorAll(".qty-bar-btn.plus").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            changeCartQty(btn.getAttribute("data-id"), 1);
+        });
+    });
+    list.querySelectorAll(".product-qty-selector-bar").forEach(sel => {
+        sel.addEventListener("click", (e) => e.stopPropagation());
+    });
 }
 
 // Setup Event Listeners
@@ -800,17 +914,7 @@ function setupEventListeners() {
         });
     }
 
-    // Category Select
-    const catBtns = categoriesList.querySelectorAll(".category-btn");
-    catBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            catBtns.forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentCategory = btn.getAttribute("data-category");
-            renderProducts();
-            triggerHapticFeedback("light");
-        });
-    });
+    // Category pills are bound inside renderCategoryTabs() (single binding, no duplicates).
 
     // Search Input
     searchInput.addEventListener("input", (e) => {
@@ -842,7 +946,6 @@ function setupEventListeners() {
         }
     });
 
-    let modalQty = 1;
     modalQtyMinus.addEventListener("click", () => {
         if (modalQty > 1) {
             modalQty--;
@@ -865,42 +968,35 @@ function setupEventListeners() {
         }
     });
 
-    // Apply Promo Code
-    promoApplyBtn.addEventListener("click", () => {
-        const code = promoInput.value.trim().toUpperCase();
-        if (promoCodes[code]) {
-            discountPercent = promoCodes[code];
-            promoStatusMsg.textContent = `Muqobil promokod! Sizga ${discountPercent}% chegirma taqdim etildi.`;
-            promoStatusMsg.className = "promo-status-msg success";
-            updateCartUI();
-            triggerHapticFeedback("medium");
-        } else {
-            discountPercent = 0;
-            promoStatusMsg.textContent = "Noma'lum yoki eskirgan promokod.";
-            promoStatusMsg.className = "promo-status-msg error";
-            updateCartUI();
-            triggerHapticFeedback("light");
-        }
-    });
+    // Apply Promo Code (guarded: the promo UI is not present in the current cart layout)
+    if (promoApplyBtn && promoInput && promoStatusMsg) {
+        promoApplyBtn.addEventListener("click", () => {
+            const code = promoInput.value.trim().toUpperCase();
+            if (promoCodes[code]) {
+                discountPercent = promoCodes[code];
+                promoStatusMsg.textContent = `Muqobil promokod! Sizga ${discountPercent}% chegirma taqdim etildi.`;
+                promoStatusMsg.className = "promo-status-msg success";
+                updateCartUI();
+                triggerHapticFeedback("medium");
+            } else {
+                discountPercent = 0;
+                promoStatusMsg.textContent = "Noma'lum yoki eskirgan promokod.";
+                promoStatusMsg.className = "promo-status-msg error";
+                updateCartUI();
+                triggerHapticFeedback("light");
+            }
+        });
+    }
 
-    // Delivery selection (hiding/showing address input)
+    // Delivery selection — visual active state + totals refresh.
+    // (Address show/hide & required toggling is handled by toggleSheetDeliveryType,
+    // wired via the sheet radios' inline onchange.)
     const deliveryTypeRadios = document.querySelectorAll('input[name="delivery_type"]');
-    const addressGroup = document.getElementById("address-group");
-    const addressInput = document.getElementById("form-address");
-    
     deliveryTypeRadios.forEach(radio => {
-        radio.addEventListener("change", (e) => {
+        radio.addEventListener("change", () => {
             const label = radio.closest(".delivery-option");
             document.querySelectorAll(".delivery-option").forEach(l => l.classList.remove("active"));
-            label.classList.add("active");
-
-            if (e.target.value === "pickup") {
-                addressGroup.style.display = "none";
-                addressInput.removeAttribute("required");
-            } else {
-                addressGroup.style.display = "flex";
-                addressInput.setAttribute("required", "required");
-            }
+            if (label) label.classList.add("active");
             updateCartUI();
             triggerHapticFeedback("light");
         });
@@ -917,11 +1013,7 @@ function setupEventListeners() {
         });
     });
 
-    // Form Checkout Submission
-    checkoutForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        handleCheckoutSubmit();
-    });
+    // Checkout submission is bound to #checkout-sheet-form at the top of this function.
 
     // Cancel Active Order
     cancelOrderBtn.addEventListener("click", () => {
@@ -1082,14 +1174,10 @@ function syncTelegramMainButton() {
 
 // Native Telegram MainButton callback wrapper
 function triggerCheckoutFormSubmit() {
-    // If inside Telegram, MainButton triggers form validation & submission
-    if (currentTab === "cart") {
-        // Trigger validation programmatically
-        if (checkoutForm.checkValidity()) {
-            handleCheckoutSubmit();
-        } else {
-            checkoutForm.reportValidity();
-        }
+    // The MainButton opens the checkout sheet; the sheet's own submit button
+    // performs validation & submission of #checkout-sheet-form.
+    if (currentTab === "cart" && cart.length > 0) {
+        openCheckoutSheet();
     }
 }
 
@@ -1104,10 +1192,14 @@ function openProductModal(product) {
     modalRating.textContent = product.rating;
     modalDescription.textContent = product.description;
     modalIngredients.textContent = product.ingredients;
-    
-    // Reset quantity
+
+    // Preparation time (was previously stuck at the static "Tezda" default)
+    const modalTimeEl = document.getElementById("modal-product-time");
+    if (modalTimeEl) modalTimeEl.textContent = product.time || "Tezda";
+
+    // Reset quantity (state + display)
+    modalQty = 1;
     modalQtyVal.textContent = "1";
-    document.getElementById("modal-qty-val").textContent = "1";
     
     productModal.style.display = "flex";
     document.body.style.overflow = "hidden"; // Prevent scrolling behind modal
@@ -1136,10 +1228,16 @@ function addToCart(productId, qty) {
     saveLocalStorage();
     updateCartUI();
     renderProductsWithScrollPreservation();
-    
+
+    // Sync catalog category detail view if active
+    const catalogCategoryView = document.getElementById("catalog-category-view");
+    if (catalogCategoryView && catalogCategoryView.style.display === "block" && currentCatalogCatId) {
+        renderCatalogCategoryProducts(currentCatalogCatId);
+    }
+
     // Show quick notification or bounce effect
     animateFloatingCart();
-    
+
     // Sync Telegram buttons
     syncTelegramMainButton();
 }
@@ -1292,7 +1390,6 @@ function updateCartUI() {
         }
         
         if (summaryTotal) summaryTotal.textContent = formatUZS(total);
-        if (btnTotalSumLabel) btnTotalSumLabel.textContent = total.toLocaleString('uz-UZ');
     }
 }
 function animateFloatingCart() {
@@ -1544,11 +1641,6 @@ function loadLocalStorage() {
         const savedProducts = localStorage.getItem("impulse_sweets_products");
         if (savedProducts) {
             products = JSON.parse(savedProducts);
-            // If less than 15 products exist, reset to ensure database richness (5 items per category)
-            if (products.length < 15) {
-                products = [...defaultProductsList];
-                localStorage.setItem("impulse_sweets_products", JSON.stringify(products));
-            }
         } else {
             products = [...defaultProductsList];
             localStorage.setItem("impulse_sweets_products", JSON.stringify(products));
@@ -2096,6 +2188,14 @@ window.openAdminProductModal = function(productId) {
 
     if (fileInput) fileInput.value = "";
 
+    // Rebuild category options from the live categories array
+    // (admin-added categories were previously missing from the hardcoded list)
+    if (formCategory) {
+        formCategory.innerHTML = categories
+            .map(c => `<option value="${c.id}">${c.name}</option>`)
+            .join("");
+    }
+
     if (productId) {
         // Edit Mode
         const p = products.find(prod => prod.id === productId);
@@ -2335,36 +2435,6 @@ window.handleCardQtyChange = function(event, productId, change) {
 
 
 
-// Slide-up Checkout Bottom Sheet Controls (Safia Layout)
-window.openCheckoutSheet = function() {
-    const overlay = document.getElementById("checkout-overlay");
-    if (overlay) {
-        overlay.classList.add("active");
-        overlay.style.display = "flex";
-        document.body.style.overflow = "hidden"; // Stop body scrolling
-        triggerHapticFeedback("medium");
-    }
-};
-
-window.closeCheckoutSheet = function() {
-    const overlay = document.getElementById("checkout-overlay");
-    if (overlay) {
-        overlay.classList.remove("active");
-        setTimeout(() => {
-            overlay.style.display = "none";
-        }, 300); // Wait for transition
-        document.body.style.overflow = "auto"; // Restore body scrolling
-        triggerHapticFeedback("light");
-    }
-};
-
-window.closeCheckoutSheetOnOuterClick = function(event) {
-    const overlay = document.getElementById("checkout-overlay");
-    if (event.target === overlay) {
-        closeCheckoutSheet();
-    }
-};
-
 // Override Checkout submission to close sheet before success screen
 const originalHandleCheckoutSubmit = handleCheckoutSubmit;
 handleCheckoutSubmit = function() {
@@ -2392,6 +2462,7 @@ window.openCheckoutSheet = function() {
     const sheet = document.getElementById("checkout-modal-sheet");
     if (sheet) {
         sheet.style.display = "flex";
+        document.body.style.overflow = "hidden"; // Lock body scroll while sheet is open
         updateSheetTotals();
         triggerHapticFeedback("medium");
     }
@@ -2401,6 +2472,7 @@ window.closeCheckoutSheet = function() {
     const sheet = document.getElementById("checkout-modal-sheet");
     if (sheet) {
         sheet.style.display = "none";
+        document.body.style.overflow = "auto";
     }
 };
 
