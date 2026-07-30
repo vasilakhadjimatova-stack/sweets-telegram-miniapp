@@ -3257,7 +3257,7 @@ input:checked + .slider:before {
 
 /* Modal Drawer / Sheet */
 .modal-backdrop {
-    position: absolute;
+    position: fixed; /* anchored to the viewport, not document top — sheet stays visible when page is scrolled */
     top: 0;
     left: 0;
     right: 0;

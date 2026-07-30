@@ -612,80 +612,10 @@
             </div>
         </div>
 
-        <!-- Slide-up Checkout Bottom Sheet Overlay (Safia Style) -->
-        <div id="checkout-overlay" class="checkout-overlay" onclick="closeCheckoutSheetOnOuterClick(event)">
-            <div class="checkout-sheet">
-                <div class="checkout-sheet-header">
-                    <h3 class="checkout-sheet-title">Buyurtmani rasmiylashtirish</h3>
-                    <button class="close-sheet-btn" onclick="closeCheckoutSheet()">✕</button>
-                </div>
-                <div class="checkout-sheet-body">
-                    <div class="checkout-form-section">
-                        <form id="checkout-form">
-                            <div class="form-group">
-                                <label for="form-name">Ismingiz <span class="required">*</span></label>
-                                <input type="text" id="form-name" placeholder="Ismingizni kiriting" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="form-phone">Telefon raqam <span class="required">*</span></label>
-                                <div class="phone-input-wrapper">
-                                    <span class="phone-prefix">+998</span>
-                                    <input type="tel" id="form-phone" placeholder="90 123 45 67" required pattern="[0-9\s-]{9,12}">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Yetkazib berish turi <span class="required">*</span></label>
-                                <div class="delivery-options">
-                                    <label class="delivery-option active">
-                                        <input type="radio" name="delivery_type" value="delivery" checked>
-                                        <i class="fa-solid fa-motorcycle"></i>
-                                        <span>Yetkazib berish</span>
-                                    </label>
-                                    <label class="delivery-option">
-                                        <input type="radio" name="delivery_type" value="pickup">
-                                        <i class="fa-solid fa-store"></i>
-                                        <span>Olib ketish</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group" id="address-group">
-                                <label for="form-address">Yetkazib berish manzili <span class="required">*</span></label>
-                                <textarea id="form-address" placeholder="Shahar, ko'cha, uy, xonadon raqamini kiriting" required></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label>To'lov turi <span class="required">*</span></label>
-                                <div class="payment-options">
-                                    <label class="payment-option active">
-                                        <input type="radio" name="payment_method" value="cash" checked>
-                                        <i class="fa-solid fa-money-bill-wave"></i>
-                                        <span>Naqd pul</span>
-                                    </label>
-                                    <label class="payment-option">
-                                        <input type="radio" name="payment_method" value="card">
-                                        <i class="fa-solid fa-credit-card"></i>
-                                        <span>Karta orqali</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="form-comment">Izoh (ixtiyoriy)</label>
-                                <textarea id="form-comment" placeholder="Tabrik so'zlari yoki qo'shimcha istaklar..."></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary btn-block checkout-submit-btn" id="submit-order-btn">
-                                <i class="fa-solid fa-circle-check"></i> Buyurtma berish (<span class="btn-total-sum" id="btn-total-sum-val">0</span> UZS)
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Success Checkout Overlay Animation -->
+        <!-- NOTE: The checkout form lives in #checkout-modal-sheet at the end of <body>.
+             The old duplicate overlay form was removed — its duplicate IDs (form-name,
+             form-phone, form-address, form-comment) made orders submit empty data. -->
         <div id="success-overlay" class="success-overlay">
             <div class="success-content">
                 <div class="success-checkmark">
@@ -753,7 +683,7 @@
                         <label for="form-phone">Telefon raqamingiz <span class="required">*</span></label>
                         <div class="phone-input-wrapper">
                             <span class="phone-prefix">+998</span>
-                            <input type="tel" id="form-phone" placeholder="90 123 45 67" required pattern="[0-9\s-]{9,12}">
+                            <input type="tel" id="form-phone" placeholder="90 123 45 67" required pattern="[0-9\s\-]{9,12}">
                         </div>
                     </div>
                     
