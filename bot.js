@@ -35,8 +35,10 @@ bot.onText(/\/start/, (msg) => {
     `Bizda eng shirin va sifatli tortlar, fransuzcha makaronlar, donatlar hamda kapkeklarni buyurtma qilishingiz mumkin.\n\n` +
     `Pastdagi *🛍 Do'konni ochish* tugmasini bosing va shirinliklar dunyosiga sayohat qiling!`;
 
-  const inlineKeyboard = {
-    inline_keyboard: [
+  // IMPORTANT: the Web App must be opened from a REPLY keyboard button —
+  // tg.sendData() (order delivery to the bot) does not work from inline buttons.
+  const replyKeyboard = {
+    keyboard: [
       [
         {
           text: "🛍 Do'konni ochish",
@@ -44,22 +46,29 @@ bot.onText(/\/start/, (msg) => {
         }
       ],
       [
-        {
-          text: "💬 Guruhimizga qo'shilish",
-          url: 'https://t.me/your_sweets_group' // Replace with user's actual group link
-        },
-        {
-          text: '📞 Aloqa / Yordam',
-          callback_data: 'support_info'
-        }
+        { text: '📞 Aloqa / Yordam' }
       ]
-    ]
+    ],
+    resize_keyboard: true,
+    is_persistent: true
   };
 
   bot.sendMessage(chatId, welcomeMessage, {
     parse_mode: 'Markdown',
-    reply_markup: inlineKeyboard
+    reply_markup: replyKeyboard
   });
+});
+
+// Support info text (shared between the reply-keyboard button and callbacks)
+const supportMessage = `*📞 Biz bilan bog'lanish:*\n\n` +
+  `Telegram: @impulse_sweets_admin\n` +
+  `Telefon: +998 90 123 45 67\n` +
+  `Ish vaqti: Har kuni, 09:00 dan 22:00 gacha\n\n` +
+  `Agar sizda maxsus buyurtmalar yoki savollar bo'lsa, bemalol murojaat qiling.`;
+
+// Reply-keyboard button: "📞 Aloqa / Yordam"
+bot.onText(/📞 Aloqa \/ Yordam/, (msg) => {
+  bot.sendMessage(msg.chat.id, supportMessage, { parse_mode: 'Markdown' });
 });
 
 // Handle Callback Queries (Support info & Admin button presses)
@@ -69,12 +78,6 @@ bot.on('callback_query', (query) => {
   const data = query.data;
 
   if (data === 'support_info') {
-    const supportMessage = `*📞 Biz bilan bog'lanish:*\n\n` +
-      `Telegram: @impulse_sweets_admin\n` +
-      `Telefon: +998 90 123 45 67\n` +
-      `Ish vaqti: Har kuni, 09:00 dan 22:00 gacha\n\n` +
-      `Agar sizda maxsus buyurtmalar yoki savollar bo'lsa, bemalol murojaat qiling.`;
-
     bot.sendMessage(chatId, supportMessage, {
       parse_mode: 'Markdown',
       reply_markup: {
