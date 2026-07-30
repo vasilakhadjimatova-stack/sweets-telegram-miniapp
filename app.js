@@ -1338,6 +1338,59 @@ function closeProductModal() {
 }
 
 // Add Item to Shopping Cart
+// Build the action control (add button OR qty stepper) HTML for a product.
+// Shared by home scroll, category/search grid and catalog detail cards.
+function buildActionControlHTML(productId) {
+    const cartItem = cart.find(item => item.product.id === productId);
+    const qty = cartItem ? cartItem.quantity : 0;
+
+    if (qty > 0) {
+        return `
+            <div class="product-qty-selector-bar">
+                <button class="qty-bar-btn minus" data-id="${productId}">−</button>
+                <span class="qty-bar-val">${qty}</span>
+                <button class="qty-bar-btn plus" data-id="${productId}">+</button>
+            </div>
+        `;
+    }
+    return `<button class="add-to-cart-bar-btn" data-id="${productId}"><i class="fa-solid fa-basket-shopping"></i></button>`;
+}
+
+// Update ONLY the tapped product's controls, everywhere it is rendered.
+// Full grid re-renders recreated every <img> and made photos flash on each tap.
+function updateProductCardControls(productId) {
+    document.querySelectorAll(`.product-card[data-id="${productId}"] .product-action-row`).forEach(row => {
+        row.innerHTML = buildActionControlHTML(productId);
+
+        const addBtn = row.querySelector(".add-to-cart-bar-btn");
+        if (addBtn) {
+            addBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                addToCart(productId, 1);
+                triggerHapticFeedback("medium");
+            });
+        }
+        const minusBtn = row.querySelector(".qty-bar-btn.minus");
+        if (minusBtn) {
+            minusBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                changeCartQty(productId, -1);
+            });
+        }
+        const plusBtn = row.querySelector(".qty-bar-btn.plus");
+        if (plusBtn) {
+            plusBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                changeCartQty(productId, 1);
+            });
+        }
+        const selector = row.querySelector(".product-qty-selector-bar");
+        if (selector) {
+            selector.addEventListener("click", (e) => e.stopPropagation());
+        }
+    });
+}
+
 function addToCart(productId, qty) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -1351,13 +1404,7 @@ function addToCart(productId, qty) {
 
     saveLocalStorage();
     updateCartUI();
-    renderProductsWithScrollPreservation();
-
-    // Sync catalog category detail view if active
-    const catalogCategoryView = document.getElementById("catalog-category-view");
-    if (catalogCategoryView && catalogCategoryView.style.display === "block" && currentCatalogCatId) {
-        renderCatalogCategoryProducts(currentCatalogCatId);
-    }
+    updateProductCardControls(productId); // targeted update — images stay untouched
 
     // Show quick notification or bounce effect
     animateFloatingCart();
@@ -1381,14 +1428,8 @@ function changeCartQty(productId, change) {
 
     saveLocalStorage();
     updateCartUI();
-    renderProductsWithScrollPreservation();
-    
-    // Sync catalog category detail view if active
-    const catalogCategoryView = document.getElementById("catalog-category-view");
-    if (catalogCategoryView && catalogCategoryView.style.display === "block" && currentCatalogCatId) {
-        renderCatalogCategoryProducts(currentCatalogCatId);
-    }
-    
+    updateProductCardControls(productId); // targeted update — images stay untouched
+
     syncTelegramMainButton();
     triggerHapticFeedback("light");
 }
@@ -1597,6 +1638,10 @@ function handleCheckoutSubmit() {
     if (promoStatusMsg) promoStatusMsg.textContent = "";
     saveLocalStorage();
     updateCartUI();
+    // Reset all product card steppers back to "add" buttons
+    // (full re-render is fine here — the success screen covers the grid)
+    renderProducts();
+    if (currentCatalogCatId) renderCatalogCategoryProducts(currentCatalogCatId);
 
     // Show custom visual success screen
     successOverlay.style.display = "flex";
@@ -2641,4 +2686,8 @@ function updateSheetTotals() {
     if (sheetSubtotal) sheetSubtotal.textContent = formatUZS(subtotal);
     if (sheetDelivery) sheetDelivery.textContent = formatUZS(delivery);
     if (sheetTotal) sheetTotal.textContent = formatUZS(total);
+
+    // Total inside the sticky confirm button
+    const btnTotal = document.getElementById("sheet-btn-total");
+    if (btnTotal) btnTotal.textContent = formatUZS(total);
 }
