@@ -669,29 +669,35 @@
     </div>
     <script src="app.js"></script>
 
-    <!-- CHECKOUT MODAL SHEET (Safia Style Drawer) -->
-    <div id="checkout-modal-sheet" class="modal-backdrop" style="display: none;">
+    <!-- CHECKOUT — full-screen page (Medovik.uz) -->
+    <div id="checkout-modal-sheet" class="modal-backdrop checkout-fullscreen" style="display: none;">
         <div class="checkout-sheet-container">
             <div class="checkout-sheet-header">
-                <h3>Buyurtmani rasmiylashtirish</h3>
-                <button class="close-sheet-btn" onclick="closeCheckoutSheet()"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" class="close-sheet-btn" onclick="closeCheckoutSheet()" title="Orqaga">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div class="checkout-header-titles">
+                    <h3>Rasmiylashtirish</h3>
+                    <span class="checkout-header-sub">Medovik.uz</span>
+                </div>
             </div>
             <div class="checkout-sheet-body">
                 <form id="checkout-sheet-form">
+                    <div class="checkout-section-label">Aloqa ma'lumotlari</div>
                     <div class="form-group">
-                        <label for="form-name">Ismingiz <span class="required">*</span></label>
-                        <input type="text" id="form-name" placeholder="Ismingizni kiriting" required>
+                        <label for="form-name">Ism <span class="required">*</span></label>
+                        <input type="text" id="form-name" placeholder="To'liq ismingiz" required autocomplete="name">
                     </div>
                     <div class="form-group">
-                        <label for="form-phone">Telefon raqamingiz <span class="required">*</span></label>
+                        <label for="form-phone">Telefon <span class="required">*</span></label>
                         <div class="phone-input-wrapper">
                             <span class="phone-prefix">+998</span>
-                            <input type="tel" id="form-phone" placeholder="90 123 45 67" required pattern="[0-9\s\-]{9,12}">
+                            <input type="tel" id="form-phone" placeholder="90 123 45 67" required pattern="[0-9\s\-]{9,12}" inputmode="numeric" autocomplete="tel-national">
                         </div>
                     </div>
-                    
+
+                    <div class="checkout-section-label">Yetkazish</div>
                     <div class="form-group">
-                        <label>Yetkazib berish turi</label>
                         <div class="delivery-options">
                             <label class="delivery-option active">
                                 <input type="radio" name="delivery_type" value="delivery" checked onchange="toggleSheetDeliveryType('delivery')">
@@ -701,55 +707,58 @@
                             <label class="delivery-option">
                                 <input type="radio" name="delivery_type" value="pickup" onchange="toggleSheetDeliveryType('pickup')">
                                 <i class="fa-solid fa-bag-shopping"></i>
-                                <span>Olib ketish (Bepul)</span>
+                                <span>Olib ketish</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group" id="sheet-address-group">
-                        <label for="form-address">Yetkazib berish manzili <span class="required">*</span></label>
-                        <textarea id="form-address" placeholder="Toshkent sh., Yunusobod 4-daha, 12-uy" rows="2" required></textarea>
+                        <label for="form-address">Manzil <span class="required">*</span></label>
+                        <textarea id="form-address" placeholder="Shahar, ko'cha, uy raqami" rows="2" required autocomplete="street-address"></textarea>
                     </div>
 
+                    <div class="checkout-section-label">To'lov</div>
                     <div class="form-group">
-                        <label>To'lov turi</label>
                         <div class="payment-options">
                             <label class="payment-option active">
                                 <input type="radio" name="payment_method" value="card" checked>
                                 <i class="fa-solid fa-credit-card"></i>
-                                <span>Karta orqali</span>
+                                <span>Karta</span>
                             </label>
                             <label class="payment-option">
                                 <input type="radio" name="payment_method" value="cash">
                                 <i class="fa-solid fa-money-bill-wave"></i>
-                                <span>Naqd pul</span>
+                                <span>Naqd</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="form-comment">Izoh (ixtiyoriy)</label>
-                        <input type="text" id="form-comment" placeholder="Masalan: Eshik qo'ng'irog'ini chalmang">
+                        <label for="form-comment">Izoh</label>
+                        <input type="text" id="form-comment" placeholder="Ixtiyoriy — masalan, yetkazish vaqti">
                     </div>
 
                     <div class="sheet-summary-box">
                         <div class="sheet-summary-row">
-                            <span>Mahsulotlar:</span>
+                            <span>Mahsulotlar</span>
                             <span id="sheet-subtotal-val">0 UZS</span>
                         </div>
                         <div class="sheet-summary-row" id="sheet-delivery-row">
-                            <span>Yetkazib berish:</span>
-                            <span id="sheet-delivery-val">20,000 UZS</span>
+                            <span>Yetkazib berish</span>
+                            <span id="sheet-delivery-val">20 000 UZS</span>
                         </div>
                         <div class="sheet-summary-row sheet-total-row">
-                            <span>Jami to'lov:</span>
+                            <span>Jami</span>
                             <span id="sheet-total-val">0 UZS</span>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block checkout-submit-btn">
-                        Buyurtmani tasdiqlash
-                    </button>
+                    <div class="checkout-footer">
+                        <button type="submit" class="btn btn-primary btn-block checkout-submit-btn">
+                            <span>Buyurtmani tasdiqlash</span>
+                            <span class="checkout-btn-total" id="sheet-btn-total">0 UZS</span>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
