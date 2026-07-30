@@ -1483,25 +1483,18 @@ function updateCartUI() {
                 const card = document.createElement("div");
                 card.className = "cart-item-card";
 
+                // Compact single-row layout: image | title + prices | stepper
                 card.innerHTML = `
-                    <div class="cart-item-top">
-                        <img src="${p.image}" alt="${p.title}" class="cart-item-image" loading="lazy">
-                        <div class="cart-item-info">
-                            <h4 class="cart-item-title">${p.title}</h4>
-                            <p class="cart-item-desc" style="margin: 0; font-size: 0.72rem; color: var(--hint-color); line-height: 1.2;">${p.description || "Mayin va shirin pishiriq."}</p>
-                            <span class="cart-unit-price" style="font-size: 0.7rem; color: var(--hint-color); margin-top: 3px; display: inline-block;">1 dona uchun: ${formatUZS(p.price)}</span>
-                        </div>
+                    <img src="${p.image}" alt="${p.title}" class="cart-item-image" loading="lazy">
+                    <div class="cart-item-info">
+                        <h4 class="cart-item-title">${p.title}</h4>
+                        <span class="cart-unit-price">${formatUZS(p.price)} × ${qty}</span>
+                        <span class="cart-item-total-val">${formatUZS(itemTotal)}</span>
                     </div>
-                    <div class="cart-item-bottom">
-                        <div class="cart-item-qty-selector">
-                            <button class="cart-qty-btn minus" data-id="${p.id}">−</button>
-                            <span class="cart-qty-val">${qty}</span>
-                            <button class="cart-qty-btn plus" data-id="${p.id}">+</button>
-                        </div>
-                        <div class="cart-item-total-price">
-                            <span class="cart-item-total-label" style="font-size: 0.65rem; color: var(--hint-color); text-transform: uppercase;">Jami</span>
-                            <span class="cart-item-total-val">${formatUZS(itemTotal)}</span>
-                        </div>
+                    <div class="cart-item-qty-selector">
+                        <button class="cart-qty-btn minus" data-id="${p.id}">−</button>
+                        <span class="cart-qty-val">${qty}</span>
+                        <button class="cart-qty-btn plus" data-id="${p.id}">+</button>
                     </div>
                 `;
 
