@@ -1284,27 +1284,11 @@ function switchTab(tabId) {
 
 // Sync Telegram Native Main Button
 function syncTelegramMainButton() {
-    if (!tg) return;
-
-    // MainButton is shown ONLY on the cart tab (checkout). On all other tabs
-    // it stays hidden — the in-app bottom nav & floating basket already cover navigation.
-    if (currentTab === "cart" && cart.length > 0) {
-        tg.MainButton.text = `BUYURTMA BERISH (${formatUZS(calculateTotal())})`;
-        // Prevent stacking duplicate click handlers on repeated syncs
-        tg.MainButton.offClick(triggerCheckoutFormSubmit);
-        tg.MainButton.onClick(triggerCheckoutFormSubmit);
-        tg.MainButton.show();
-    } else {
+    // The native Telegram MainButton is intentionally NOT used — the in-app
+    // gold "Buyurtmani rasmiylashtirish" button handles checkout, and the
+    // blue system bar duplicated it. Keep it always hidden.
+    if (tg && tg.MainButton) {
         tg.MainButton.hide();
-    }
-}
-
-// Native Telegram MainButton callback wrapper
-function triggerCheckoutFormSubmit() {
-    // The MainButton opens the checkout sheet; the sheet's own submit button
-    // performs validation & submission of #checkout-sheet-form.
-    if (currentTab === "cart" && cart.length > 0) {
-        openCheckoutSheet();
     }
 }
 
