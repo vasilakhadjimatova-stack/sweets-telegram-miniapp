@@ -1,5 +1,6 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
+const db = require('./db');
 
 // Retrieve environment variables
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -15,11 +16,19 @@ if (!token) {
 const bot = new TelegramBot(token, { polling: true });
 
 console.log('Telegram shirinliklar boti ishga tushdi...');
+console.log(`Ma'lumotlar bazasi: ${db.dbPath}`);
 
 // Respond to /start command
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || 'Mijoz';
+
+  // Register/update the user in the database
+  try {
+    db.upsertUser(msg.from);
+  } catch (err) {
+    console.error("Foydalanuvchini bazaga saqlashda xatolik:", err);
+  }
 
   const welcomeMessage = `*Assalomu alaykum, ${firstName}!* 🍰✨\n\n` +
     `*Impulse Sweets* premium shirinliklar do'konining Telegram botiga xush kelibsiz!\n\n` +
@@ -91,6 +100,14 @@ bot.on('callback_query', (query) => {
     let statusText = "";
     let newKeyboard = null;
 
+    // Persist the status change in the database
+    const statusMap = { confirm: 'confirmed', deliver: 'delivered', cancel: 'cancelled' };
+    try {
+      db.updateOrderStatusByCode(orderId, statusMap[action]);
+    } catch (err) {
+      console.error('Buyurtma statusini bazada yangilashda xatolik:', err);
+    }
+
     if (action === 'confirm') {
       statusText = `\n\n⚙️ *Holati:* QABUL QILINDI (Operator: ${operator})`;
       newKeyboard = {
@@ -124,6 +141,39 @@ bot.on('callback_query', (query) => {
   }
 });
 
+// /stats — shop statistics from the database (admins only).
+// If ADMIN_GROUP_ID is set, the command only works in that chat.
+bot.onText(/\/stats/, (msg) => {
+  const chatId = msg.chat.id;
+
+  if (adminGroupId && String(chatId) !== String(adminGroupId)) {
+    return; // Ignore /stats outside the admin group
+  }
+
+  try {
+    const s = db.getStats();
+    const fmt = (n) => (n || 0).toLocaleString('uz-UZ');
+
+    const statsMessage = `*📊 Do'kon statistikasi*\n\n` +
+      `👥 Mijozlar: *${fmt(s.total_users)}*\n` +
+      `🧾 Jami buyurtmalar: *${fmt(s.total_orders)}*\n` +
+      `💰 Jami tushum: *${fmt(s.revenue)} UZS*\n\n` +
+      `*Bugun:*\n` +
+      `• Buyurtmalar: ${fmt(s.orders_today)}\n` +
+      `• Tushum: ${fmt(s.revenue_today)} UZS\n\n` +
+      `*Holatlar bo'yicha:*\n` +
+      `🆕 Yangi: ${fmt(s.new_count)}\n` +
+      `⚙️ Qabul qilingan: ${fmt(s.confirmed_count)}\n` +
+      `✅ Yetkazilgan: ${fmt(s.delivered_count)}\n` +
+      `❌ Bekor qilingan: ${fmt(s.cancelled_count)}`;
+
+    bot.sendMessage(chatId, statsMessage, { parse_mode: 'Markdown' });
+  } catch (err) {
+    console.error('Statistikani olishda xatolik:', err);
+    bot.sendMessage(chatId, 'Statistikani olishda xatolik yuz berdi.');
+  }
+});
+
 // Handle Data Received from the Web App (tg.sendData)
 bot.on('web_app_data', (msg) => {
   const chatId = msg.chat.id;
@@ -131,7 +181,15 @@ bot.on('web_app_data', (msg) => {
   
   try {
     const order = JSON.parse(msg.web_app_data.data);
-    
+
+    // 0. Persist the order (and the customer) in the database
+    try {
+      const internalId = db.createOrder(order, user);
+      console.log(`Buyurtma bazaga saqlandi: #${order.orderId} (ichki ID: ${internalId})`);
+    } catch (err) {
+      console.error('Buyurtmani bazaga saqlashda xatolik:', err);
+    }
+
     // 1. Generate Order Summary text
     let itemsText = '';
     order.items.forEach((item, index) => {

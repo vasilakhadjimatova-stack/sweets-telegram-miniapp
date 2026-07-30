@@ -9,6 +9,7 @@
     "dev": "node bot.js"
   },
   "dependencies": {
+    "better-sqlite3": "^11.10.0",
     "dotenv": "^16.4.5",
     "node-telegram-bot-api": "^0.66.0"
   }
