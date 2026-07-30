@@ -45,7 +45,7 @@ bot.onText(/\/start/, (msg) => {
   const firstName = escapeMd(msg.from.first_name || 'Mijoz');
 
   const welcomeMessage = `*Assalomu alaykum, ${firstName}!* 🍰✨\n\n` +
-    `*Impulse Sweets* premium shirinliklar do'konining Telegram botiga xush kelibsiz!\n\n` +
+    `*Medovik.uz* premium shirinliklar do'konining Telegram botiga xush kelibsiz!\n\n` +
     `Bizda eng shirin va sifatli tortlar, fransuzcha makaronlar, donatlar hamda kapkeklarni buyurtma qilishingiz mumkin.\n\n` +
     `Pastdagi *🛍 Do'konni ochish* tugmasini bosing va shirinliklar dunyosiga sayohat qiling!`;
 

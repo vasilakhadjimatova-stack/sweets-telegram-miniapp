@@ -1,35 +1,80 @@
+/* ==========================================================
+   MEDOVIK.UZ — Luxury Honey Patisserie Design System
+   Light: warm ivory + caramelized honey + espresso
+   Dark:  espresso night + glowing amber
+   ========================================================== */
 :root {
-    /* Color Palette */
-    --primary-color: #D4AF37; /* Luxury Gold */
-    --primary-light: #F4E8C1;
-    --primary-dark: #AA8B24;
-    --accent-color: #E05275; /* Sweet Pink / Crimson */
-    --accent-light: #FFEBEE;
-    
-    /* Telegram Theme Variables with Fallbacks */
-    --bg-color: var(--tg-theme-bg-color, #FAF7F2);
-    --secondary-bg-color: var(--tg-theme-secondary-bg-color, #F2EBE1);
-    --text-color: var(--tg-theme-text-color, #2D231E);
-    --hint-color: var(--tg-theme-hint-color, #7C6E65);
-    --link-color: var(--tg-theme-link-color, #D4AF37);
-    --button-color: var(--tg-theme-button-color, #D4AF37);
-    --button-text-color: var(--tg-theme-button-text-color, #FFFFFF);
-    --border-color: rgba(212, 175, 55, 0.15);
-    
-    /* Layout & Styling Properties */
-    --font-heading: 'Playfair Display', serif;
-    --font-body: 'Inter', sans-serif;
-    
+    /* Brand — honey & gold */
+    --primary-color: #B67F1E;   /* Rich honey amber */
+    --primary-light: #F1E2C2;   /* Honey milk */
+    --primary-dark: #8F6212;    /* Caramelized honey */
+    --gold-sheen: #D9A441;      /* Golden sheen (gradient top) */
+    --accent-color: #A93E55;    /* Raspberry coulis */
+    --accent-light: #F8E9EC;
+
+    /* Surfaces & text */
+    --bg-color: #FBF6ED;            /* Warm ivory */
+    --secondary-bg-color: #F3EBDC;  /* Almond cream */
+    --surface-color: #FFFFFF;       /* Cards, sheets, modals */
+    --text-color: #2B1D12;          /* Deep espresso */
+    --hint-color: #8A7460;          /* Latte */
+    --link-color: #B67F1E;
+    --button-color: #B67F1E;
+    --button-text-color: #FFFDF8;
+    --border-color: rgba(182, 127, 30, 0.16);
+
+    --gold-gradient: linear-gradient(135deg, #D9A441 0%, #B67F1E 55%, #9A6A12 100%);
+
+    /* Glass surfaces (cards, search) */
+    --surface-glass: rgba(255, 255, 255, 0.8);
+    --surface-glass-strong: rgba(255, 255, 255, 0.95);
+    --surface-glass-soft: rgba(255, 255, 255, 0.5);
+
+    /* Typography */
+    --font-heading: 'Prata', 'Playfair Display', serif;
+    --font-body: 'Golos Text', system-ui, -apple-system, sans-serif;
+
     --radius-lg: 24px;
     --radius-md: 16px;
     --radius-sm: 10px;
     --radius-full: 9999px;
-    
-    --shadow-sm: 0 4px 10px rgba(45, 35, 30, 0.04);
-    --shadow-md: 0 8px 20px rgba(45, 35, 30, 0.06);
-    --shadow-lg: 0 16px 32px rgba(45, 35, 30, 0.12);
-    
+
+    --shadow-sm: 0 4px 10px rgba(63, 42, 16, 0.05);
+    --shadow-md: 0 8px 22px rgba(63, 42, 16, 0.08);
+    --shadow-lg: 0 18px 38px rgba(63, 42, 16, 0.14);
+
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Dark theme — espresso night with glowing amber.
+   Toggled via data-theme, driven by Telegram colorScheme in app.js */
+:root[data-theme="dark"] {
+    --primary-color: #D9A441;
+    --primary-light: rgba(217, 164, 65, 0.16);
+    --primary-dark: #B67F1E;
+    --gold-sheen: #E9BC63;
+    --accent-color: #D96A80;
+    --accent-light: rgba(217, 106, 128, 0.16);
+
+    --bg-color: #16100B;
+    --secondary-bg-color: #211811;
+    --surface-color: #271D13;
+    --text-color: #F3E9DA;
+    --hint-color: #A5917C;
+    --link-color: #D9A441;
+    --button-color: #D9A441;
+    --button-text-color: #241A0F;
+    --border-color: rgba(217, 164, 65, 0.22);
+
+    --gold-gradient: linear-gradient(135deg, #E9BC63 0%, #D9A441 55%, #B67F1E 100%);
+
+    --surface-glass: rgba(39, 29, 19, 0.82);
+    --surface-glass-strong: rgba(46, 35, 23, 0.95);
+    --surface-glass-soft: rgba(39, 29, 19, 0.55);
+
+    --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 8px 22px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 18px 38px rgba(0, 0, 0, 0.55);
 }
 
 /* Base resets & styles */
@@ -1347,7 +1392,7 @@ body {
 
 /* KPI Gradients */
 .grad-gold {
-    background: linear-gradient(135deg, #D4AF37, #AA8B24) !important;
+    background: var(--gold-gradient) !important;
     border: none !important;
 }
 
@@ -2949,10 +2994,10 @@ input:checked + .slider:before {
 .checkout-trigger-btn,
 .checkout-submit-btn,
 .product-qty-selector {
-    background: linear-gradient(135deg, #D4AF37, #C5A028) !important;
+    background: var(--gold-gradient) !important;
     border-color: transparent !important;
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25) !important;
-    color: white !important;
+    box-shadow: 0 4px 14px rgba(182, 127, 30, 0.3) !important;
+    color: var(--button-text-color) !important;
 }
 
 /* Glow effects and scales on active state */
@@ -2964,43 +3009,43 @@ input:checked + .slider:before {
     filter: brightness(0.95);
 }
 
-/* Soft card glassmorphism effect */
+/* Soft card glassmorphism effect (theme-aware) */
 .product-card,
 .cart-item-card,
 .catalog-card,
 .admin-stat-card {
-    background: rgba(255, 255, 255, 0.8) !important;
+    background: var(--surface-glass) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(212, 175, 55, 0.12) !important;
-    box-shadow: 0 4px 15px rgba(45, 35, 30, 0.03) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-sm) !important;
 }
 
 .product-card:active,
 .cart-item-card:active,
 .catalog-card:active {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-color: rgba(212, 175, 55, 0.25) !important;
+    background: var(--surface-glass-strong) !important;
+    border-color: var(--primary-color) !important;
     transform: scale(0.97) !important;
-    box-shadow: 0 2px 8px rgba(45, 35, 30, 0.02) !important;
+    box-shadow: var(--shadow-sm) !important;
 }
 
-/* Rounded search bar glassmorphism */
+/* Rounded search bar glassmorphism (theme-aware) */
 .search-bar-premium {
-    background: rgba(255, 255, 255, 0.5) !important;
+    background: var(--surface-glass-soft) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(212, 175, 55, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
 }
 
 .search-bar-premium:focus-within {
-    background: rgba(255, 255, 255, 0.9) !important;
+    background: var(--surface-glass-strong) !important;
     border-color: var(--primary-color) !important;
 }
 
 /* Header style enhancements */
 .app-header-premium {
-    background: linear-gradient(180deg, #F2EBE1 0%, rgba(250, 247, 242, 0) 100%) !important;
+    background: linear-gradient(180deg, var(--secondary-bg-color) 0%, transparent 100%) !important;
     border-bottom: none !important;
 }
 
@@ -3909,4 +3954,133 @@ input:checked + .slider:before {
 
 .large-product-card:active {
     transform: scale(0.985);
+}
+
+/* ==========================================================
+   MEDOVIK.UZ — Professional polish layer
+   ========================================================== */
+
+/* --- Toast notifications --- */
+.toast-container {
+    position: fixed;
+    left: 50%;
+    bottom: 86px;
+    transform: translateX(-50%);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    width: max-content;
+    max-width: calc(100vw - 40px);
+}
+
+.toast {
+    background: var(--surface-glass-strong);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-full);
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: toastIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.toast i {
+    color: var(--primary-color);
+}
+
+.toast.toast-leaving {
+    animation: toastOut 0.25s ease forwards;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.92); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(8px) scale(0.95); }
+}
+
+/* --- Image skeleton shimmer (visible until the photo paints over it) --- */
+.card-image-wrapper,
+.catalog-card-img-wrapper,
+.large-card-img-wrapper {
+    background: linear-gradient(
+        100deg,
+        var(--secondary-bg-color) 40%,
+        var(--primary-light) 50%,
+        var(--secondary-bg-color) 60%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+    from { background-position: 130% 0; }
+    to   { background-position: -30% 0; }
+}
+
+/* --- Brand wordmark: refined Prata serif with honey accent --- */
+.logo-brand-top {
+    font-weight: 400; /* Prata is a single-weight display serif */
+    font-size: 1.28rem;
+    letter-spacing: 0.02em;
+}
+
+.logo-brand-accent-top {
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--primary-color); /* fallback */
+}
+
+/* --- Theme-aware form controls --- */
+input, textarea, select {
+    color: var(--text-color);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--hint-color);
+    opacity: 0.75;
+}
+
+/* --- Dark-theme refinements for surfaces that assumed light --- */
+:root[data-theme="dark"] .checkout-sheet-container,
+:root[data-theme="dark"] .modal-content {
+    background-color: var(--surface-color);
+}
+
+:root[data-theme="dark"] .app-nav {
+    background-color: rgba(22, 16, 11, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* --- Reduced motion: respect the user's system preference --- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Success screen order number */
+.success-order-meta {
+    font-family: var(--font-heading);
+    color: var(--primary-color);
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    margin: 4px 0 10px 0;
 }
