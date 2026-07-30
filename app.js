@@ -11,6 +11,107 @@ if (tg) {
     }
 }
 
+// ==========================================
+// THEME — follow Telegram colorScheme (dark/light),
+// or the system preference when opened outside Telegram
+// ==========================================
+function applyTheme() {
+    const isDark = tg && tg.colorScheme
+        ? tg.colorScheme === "dark"
+        : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+
+    // Match Telegram's chrome (header/background) to the app palette
+    if (tg) {
+        try {
+            if (tg.setHeaderColor) tg.setHeaderColor(isDark ? "#16100B" : "#FBF6ED");
+            if (tg.setBackgroundColor) tg.setBackgroundColor(isDark ? "#16100B" : "#FBF6ED");
+        } catch (e) { /* older clients may not support these */ }
+    }
+}
+applyTheme();
+if (tg && tg.onEvent) {
+    tg.onEvent("themeChanged", applyTheme);
+} else if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+}
+
+// ==========================================
+// TOAST — lightweight non-blocking notifications
+// ==========================================
+function showToast(message, icon = "fa-circle-check") {
+    const container = document.getElementById("toast-container");
+    if (!container) return;
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    const iconEl = document.createElement("i");
+    iconEl.className = `fa-solid ${icon}`;
+    const textEl = document.createElement("span");
+    textEl.textContent = message;
+    toast.append(iconEl, textEl);
+    container.appendChild(toast);
+
+    // Keep at most 2 stacked toasts
+    while (container.children.length > 2) container.firstElementChild.remove();
+
+    setTimeout(() => {
+        toast.classList.add("toast-leaving");
+        setTimeout(() => toast.remove(), 260);
+    }, 2100);
+}
+
+// ==========================================
+// CONFIRM — native Telegram dialog with browser fallback
+// (window.confirm is unreliable inside some Telegram webviews)
+// ==========================================
+function tgConfirm(message, onConfirm) {
+    if (tg && tg.showConfirm) {
+        tg.showConfirm(message, (ok) => { if (ok) onConfirm(); });
+    } else if (window.confirm(message)) {
+        onConfirm();
+    }
+}
+
+// ==========================================
+// NATIVE BACK BUTTON — Telegram-header back navigation
+// Shown whenever the user is anywhere deeper than the shop home.
+// ==========================================
+function updateBackButton() {
+    if (!tg || !tg.BackButton) return;
+
+    const modalOpen = productModal && productModal.style.display === "flex";
+    const sheet = document.getElementById("checkout-modal-sheet");
+    const sheetOpen = sheet && sheet.style.display === "flex";
+    const catalogDetail = document.getElementById("catalog-category-view");
+    const catalogDetailOpen = catalogDetail && catalogDetail.style.display === "block";
+
+    if (modalOpen || sheetOpen || catalogDetailOpen || currentTab !== "shop") {
+        tg.BackButton.show();
+    } else {
+        tg.BackButton.hide();
+    }
+}
+
+if (tg && tg.BackButton) {
+    tg.BackButton.onClick(() => {
+        const sheet = document.getElementById("checkout-modal-sheet");
+        const catalogDetail = document.getElementById("catalog-category-view");
+
+        if (sheet && sheet.style.display === "flex") {
+            closeCheckoutSheet();
+        } else if (productModal && productModal.style.display === "flex") {
+            closeProductModal();
+        } else if (currentTab === "catalog" && catalogDetail && catalogDetail.style.display === "block") {
+            closeCatalogCategoryView();
+        } else if (currentTab !== "shop") {
+            switchTab("shop");
+        }
+        updateBackButton();
+    });
+}
+
 // Product Database
 // Default Confectionery Database (5 products per category)
 const defaultProductsList = [
@@ -387,6 +488,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Setup Telegram User Profile
 function setupTelegramUser() {
+    // Time-aware greeting — a small touch of hospitality
+    const greetingEl = document.getElementById("greeting-text");
+    if (greetingEl) {
+        const h = new Date().getHours();
+        greetingEl.textContent =
+            h < 6 ? "Xayrli tun" :
+            h < 12 ? "Xayrli tong" :
+            h < 18 ? "Xayrli kun" : "Xayrli oqshom";
+    }
+
     if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const user = tg.initDataUnsafe.user;
         const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
@@ -670,6 +781,7 @@ window.openCatalogCategory = function(catId) {
 
     renderCatalogCategoryProducts(catId);
     window.scrollTo(0, 0);
+    updateBackButton();
     triggerHapticFeedback("light");
 };
 
@@ -679,6 +791,7 @@ window.closeCatalogCategoryView = function() {
     const view = document.getElementById("catalog-category-view");
     if (view) view.style.display = "none";
     if (grid) grid.style.display = "";
+    updateBackButton();
     triggerHapticFeedback("light");
 };
 
@@ -762,6 +875,20 @@ function setupEventListeners() {
             e.preventDefault();
             closeCheckoutSheet();
             handleCheckoutSubmit();
+        });
+    }
+
+    // Auto-format the phone number as "90 123 45 67" while typing
+    const phoneField = document.getElementById("form-phone");
+    if (phoneField) {
+        phoneField.addEventListener("input", () => {
+            const digits = phoneField.value.replace(/\D/g, "").slice(0, 9);
+            const parts = [];
+            if (digits.length > 0) parts.push(digits.slice(0, 2));
+            if (digits.length > 2) parts.push(digits.slice(2, 5));
+            if (digits.length > 5) parts.push(digits.slice(5, 7));
+            if (digits.length > 7) parts.push(digits.slice(7, 9));
+            phoneField.value = parts.join(" ");
         });
     }
 
@@ -1017,19 +1144,13 @@ function setupEventListeners() {
 
     // Cancel Active Order
     cancelOrderBtn.addEventListener("click", () => {
-        if (confirm("Haqiqatan ham buyurtmani bekor qilmoqchimisiz?")) {
+        tgConfirm("Haqiqatan ham buyurtmani bekor qilmoqchimisiz?", () => {
             activeOrder = null;
             saveLocalStorage();
             updateTrackingUI();
             triggerHapticFeedback("medium");
-            if (tg && tg.showPopup) {
-                tg.showPopup({
-                    title: "Buyurtma bekor qilindi",
-                    message: "Buyurtmangiz muvaffaqiyatli bekor qilindi.",
-                    buttons: [{ type: "ok" }]
-                });
-            }
-        }
+            showToast("Buyurtma bekor qilindi", "fa-circle-xmark");
+        });
     });
 
     // Done Success Screen Button
@@ -1153,6 +1274,7 @@ function switchTab(tabId) {
 
     // Sync Telegram Native Main Button
     syncTelegramMainButton();
+    updateBackButton();
 }
 
 // Sync Telegram Native Main Button
@@ -1203,6 +1325,7 @@ function openProductModal(product) {
     
     productModal.style.display = "flex";
     document.body.style.overflow = "hidden"; // Prevent scrolling behind modal
+    updateBackButton();
     triggerHapticFeedback("light");
 }
 
@@ -1211,6 +1334,7 @@ function closeProductModal() {
     productModal.style.display = "none";
     document.body.style.overflow = "auto";
     selectedProduct = null;
+    updateBackButton();
 }
 
 // Add Item to Shopping Cart
@@ -1237,6 +1361,10 @@ function addToCart(productId, qty) {
 
     // Show quick notification or bounce effect
     animateFloatingCart();
+    if (!existingItem) {
+        const shortTitle = product.title.length > 26 ? product.title.slice(0, 24) + "…" : product.title;
+        showToast(`${shortTitle} — savatga qo'shildi`, "fa-basket-shopping");
+    }
 
     // Sync Telegram buttons
     syncTelegramMainButton();
@@ -1472,6 +1600,8 @@ function handleCheckoutSubmit() {
 
     // Show custom visual success screen
     successOverlay.style.display = "flex";
+    const successMeta = document.getElementById("success-order-meta");
+    if (successMeta) successMeta.textContent = `Buyurtma raqami: #${orderData.orderId}`;
 
     // Update tracking UI
     updateTrackingUI();
@@ -1803,7 +1933,7 @@ window.deleteCategory = function(categoryId) {
         message += `\nDiqqat: Ushbu kategoriyada ${affectedProducts.length} ta mahsulot bor. Ular "Boshqalar" kategoriyasiga o'tkaziladi.`;
     }
     
-    if (confirm(message)) {
+    tgConfirm(message, () => {
         // Move products to 'others' fallback category
         if (affectedProducts.length > 0) {
             // Ensure 'others' exists
@@ -1814,17 +1944,18 @@ window.deleteCategory = function(categoryId) {
                 p.category = "others";
             });
         }
-        
+
         // Remove category
         categories = categories.filter(c => c.id !== categoryId);
-        
+
         saveLocalStorage();
         renderCategoryTabs();
         renderProducts();
         renderAdminPanel();
         renderCategoryManager();
         triggerHapticFeedback("success");
-    }
+        showToast("Kategoriya o'chirildi", "fa-trash-can");
+    });
 };
 
 function renderAdminPanel() {
@@ -2324,13 +2455,14 @@ window.deleteProduct = function(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    if (confirm(`"${product.title}" shirinligini katalogdan butunlay o'chirmoqchimisiz?`)) {
+    tgConfirm(`"${product.title}" shirinligini katalogdan butunlay o'chirmoqchimisiz?`, () => {
         products = products.filter(p => p.id !== productId);
         localStorage.setItem("impulse_sweets_products", JSON.stringify(products));
         renderProducts();
         renderAdminPanel();
         triggerHapticFeedback("success");
-    }
+        showToast("Mahsulot o'chirildi", "fa-trash-can");
+    });
 };
 
 // Start Automated Promo Banner Slider
@@ -2446,14 +2578,15 @@ handleCheckoutSubmit = function() {
 // Clear Cart Confirm
 window.clearCartConfirm = function() {
     if (cart.length === 0) return;
-    if (confirm("Savatni butunlay tozalashni xohlaysizmi?")) {
+    tgConfirm("Savatni butunlay tozalashni xohlaysizmi?", () => {
         cart = [];
         saveLocalStorage();
         updateCartUI();
         renderProductsWithScrollPreservation();
         syncTelegramMainButton();
         triggerHapticFeedback("medium");
-    }
+        showToast("Savat tozalandi", "fa-broom");
+    });
 };
 
 // Open & Close Checkout Sheet Modal (Safia Drawer)
@@ -2464,6 +2597,7 @@ window.openCheckoutSheet = function() {
         sheet.style.display = "flex";
         document.body.style.overflow = "hidden"; // Lock body scroll while sheet is open
         updateSheetTotals();
+        updateBackButton();
         triggerHapticFeedback("medium");
     }
 };
@@ -2473,6 +2607,7 @@ window.closeCheckoutSheet = function() {
     if (sheet) {
         sheet.style.display = "none";
         document.body.style.overflow = "auto";
+        updateBackButton();
     }
 };
 
