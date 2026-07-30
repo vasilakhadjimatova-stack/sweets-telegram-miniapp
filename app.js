@@ -9,6 +9,11 @@ if (tg) {
     if (tg.enableClosingConfirmation) {
         tg.enableClosingConfirmation();
     }
+    // Prevent the swipe-down gesture from collapsing/closing the Mini App
+    // while the user scrolls the page (Bot API 7.7+)
+    if (tg.disableVerticalSwipes) {
+        tg.disableVerticalSwipes();
+    }
 }
 
 // ==========================================
