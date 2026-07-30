@@ -382,7 +382,7 @@ let modalQty = 1; // Product modal quantity (reset each time the modal opens)
 
 // Telegram user IDs allowed to see the "Boshqaruv" (admin) tab.
 // Empty list = tab stays visible to everyone (fill with real IDs to lock it down).
-const ADMIN_TG_IDS = [];
+const ADMIN_TG_IDS = [6126172844];
 
 let categories = [
     { id: "cakes", name: "Tortlar" },
